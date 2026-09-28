@@ -10,11 +10,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.PRIMARY.DEFAULT,
-        tabBarInactiveTintColor: COLORS.SLATE.INACTIVE,
+        tabBarActiveTintColor: COLORS.primary.DEFAULT,
+        tabBarInactiveTintColor: COLORS.slate.inactive,
         tabBarStyle: {
           borderTopWidth: 1,
-          borderTopColor: COLORS.SLATE.BORDER,
+          borderTopColor: COLORS.slate.border,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
@@ -24,7 +24,7 @@ export default function TabLayout() {
             onPress={handleOpenSettings}
             className="mr-4 p-1 active:opacity-70"
           >
-            <Settings size={22} color={COLORS.SLATE.TEXT} />
+            <Settings size={22} color={COLORS.slate.text} />
           </Pressable>
         ),
       }}

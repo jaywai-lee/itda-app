@@ -37,57 +37,57 @@ export const CreateTripModalView = ({
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title="새 여행 추가" />
       <Modal.Body>
-        <Text className="text-sm font-semibold text-slate-TEXT mb-1">
+        <Text className="text-sm font-semibold text-slate-text mb-1">
           여행 이름
         </Text>
         <TextInput
           placeholder="예: 도쿄 3박 4일 여행"
           value={formState.name}
           onChangeText={handlers.onChangeName}
-          className="border border-slate-border rounded-xl p-3 mb-4 text-slate-TEXT"
+          className="border border-slate-border rounded-xl p-3 mb-4 text-slate-text"
         />
 
         <View className="flex-row gap-3 mb-4">
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-TEXT mb-1">
+            <Text className="text-sm font-semibold text-slate-text mb-1">
               시작일
             </Text>
             <TextInput
               placeholder="YYYY-MM-DD"
               value={formState.startDate}
               onChangeText={handlers.onChangeStartDate}
-              className="border border-slate-border rounded-xl p-3 text-slate-TEXT"
+              className="border border-slate-border rounded-xl p-3 text-slate-text"
             />
           </View>
 
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-TEXT mb-1">
+            <Text className="text-sm font-semibold text-slate-text mb-1">
               종료일
             </Text>
             <TextInput
               placeholder="YYYY-MM-DD"
               value={formState.endDate}
               onChangeText={handlers.onChangeEndDate}
-              className="border border-slate-border rounded-xl p-3 text-slate-TEXT"
+              className="border border-slate-border rounded-xl p-3 text-slate-text"
             />
           </View>
         </View>
 
         <View className="flex-row gap-3">
           <View className="w-28">
-            <Text className="text-sm font-semibold text-slate-TEXT mb-1">
+            <Text className="text-sm font-semibold text-slate-text mb-1">
               통화
             </Text>
             <TextInput
               placeholder="KRW"
               value={formState.currency}
               onChangeText={handlers.onChangeCurrency}
-              className="border border-slate-border rounded-xl p-3 text-slate-TEXT uppercase"
+              className="border border-slate-border rounded-xl p-3 text-slate-text uppercase"
             />
           </View>
 
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-TEXT mb-1">
+            <Text className="text-sm font-semibold text-slate-text mb-1">
               총 예산
             </Text>
             <TextInput
@@ -95,7 +95,7 @@ export const CreateTripModalView = ({
               keyboardType="numeric"
               value={formState.totalBudget}
               onChangeText={handlers.onChangeTotalBudget}
-              className="border border-slate-border rounded-xl p-3 text-slate-TEXT"
+              className="border border-slate-border rounded-xl p-3 text-slate-text"
             />
           </View>
         </View>

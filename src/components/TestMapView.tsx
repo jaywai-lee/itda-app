@@ -23,7 +23,7 @@ export const TestMapView = () => {
           }}
           title="도쿄 타워"
           description="Phase 1 지도 마커 테스트"
-          pinColor={COLORS.PRIMARY.DEFAULT}
+          pinColor={COLORS.primary.DEFAULT}
         />
       </MapView>
 

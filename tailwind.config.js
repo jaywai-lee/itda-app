@@ -7,9 +7,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: COLORS.PRIMARY,
-        budget: COLORS.BUDGET,
-        slate: COLORS.SLATE,
+        primary: COLORS.primary,
+        budget: COLORS.budget,
+        slate: COLORS.slate,
       },
     },
   },
