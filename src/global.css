@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .card-container {
+    @apply bg-white rounded-2xl p-4 shadow-sm border border-slate-100;
+  }
+
+  .text-amount {
+    @apply font-bold text-slate-900 tracking-tight;
+  }
+}
