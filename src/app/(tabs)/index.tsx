@@ -1,3 +1,4 @@
+import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
 import { CreateTripModal } from "@/components/trip/CreateTripModal";
 import { COLORS } from "@/constants/colors";
 import { useTrips } from "@/hooks/useTrips";
@@ -64,25 +65,31 @@ export default function AccountBookScreen() {
         <FlatList
           data={trips}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm">
-              <Text className="text-lg font-bold text-slate-text mb-1">
-                {item.name}
-              </Text>
-              <View className="flex-row items-center mb-2">
-                <Calendar size={14} color={COLORS.slate.inactive} />
-                <Text className="text-xs text-slate-inactive ml-1">
-                  {item.start_date} ~ {item.end_date}
+          renderItem={({ item, index }) => {
+            let dummySpent = 0;
+            if (index === 0) dummySpent = item.total_budget * 0.4;
+            else if (index === 1) dummySpent = item.total_budget * 0.85;
+            else dummySpent = item.total_budget * 1.1;
+            return (
+              <View className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm">
+                <Text className="text-lg font-bold text-slate-text mb-1">
+                  {item.name}
                 </Text>
+                <View className="flex-row items-center mb-2">
+                  <Calendar size={14} color={COLORS.slate.inactive} />
+                  <Text className="text-xs text-slate-inactive ml-1">
+                    {item.start_date} ~ {item.end_date}
+                  </Text>
+                </View>
+
+                <BudgetProgressBar
+                  totalBudget={item.total_budget}
+                  totalSpent={dummySpent}
+                  currency={item.currency}
+                />
               </View>
-              <View className="flex-row justify-between border-t border-slate-border pt-2 mt-1">
-                <Text className="text-xs text-slate-inactive">총 예산</Text>
-                <Text className="text-sm font-bold text-slate-text">
-                  {item.total_budget.toLocaleString()} {item.currency}
-                </Text>
-              </View>
-            </View>
-          )}
+            );
+          }}
         />
       )}
 
