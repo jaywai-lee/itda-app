@@ -1,4 +1,4 @@
-import { useCreateTrip } from "@/hooks/useCreateTrip";
+import { useCreateTrip } from "@/hooks/trip/useCreateTrip";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Alert, Platform } from "react-native";
