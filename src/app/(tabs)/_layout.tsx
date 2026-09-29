@@ -1,12 +1,27 @@
 import { COLORS } from "@/constants/colors";
-import { router, Tabs } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { Redirect, router, Tabs } from "expo-router";
 import { Calendar, Settings, User, Wallet } from "lucide-react-native";
-import { Pressable } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 
 export default function TabLayout() {
+  const { session, loading } = useAuth();
+
   const handleOpenSettings = () => {
     router.push("/settings" as any);
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-slate-bg">
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
+      </View>
+    );
+  }
+
+  if (!session) {
+    return <Redirect href={"/login" as any} />;
+  }
   return (
     <Tabs
       screenOptions={{

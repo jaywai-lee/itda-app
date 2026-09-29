@@ -22,11 +22,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const validateSession = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+      } else {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(user);
+      }
       setLoading(false);
-    });
+    };
+
+    validateSession();
 
     const {
       data: { subscription },
@@ -41,12 +57,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signOut = async () => {
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, loading, signOut: handleSignOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
