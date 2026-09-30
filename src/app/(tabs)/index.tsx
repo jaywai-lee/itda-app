@@ -1,12 +1,15 @@
 import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
 import { CreateTripModal } from "@/components/trip/CreateTripModal";
 import { COLORS } from "@/constants/colors";
+import { useDeleteTrip } from "@/hooks/trip/useDeleteTrip";
 import { useTrips } from "@/hooks/trip/useTrips";
+import { Trip } from "@/types/database";
 import { useRouter } from "expo-router";
-import { Calendar, Plus } from "lucide-react-native";
+import { Calendar, Pencil, Plus, Trash2 } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   Text,
@@ -15,11 +18,43 @@ import {
 
 export default function AccountBookScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+
   const { data: trips, isLoading } = useTrips();
+  const { mutate: deleteTrip } = useDeleteTrip();
   const router = useRouter();
 
-  const handleOpenModal = () => setIsModalVisible(true);
-  const handleCloseModal = () => setIsModalVisible(false);
+  const handleOpenCreateModal = () => {
+    setSelectedTrip(null);
+    setIsModalVisible(true);
+  };
+
+  const handleOpenEditModal = (trip: Trip, e: any) => {
+    e.stopPropagation();
+    setSelectedTrip(trip);
+    setIsModalVisible(true);
+  };
+
+  const handleDeleteTrip = (tripId: string, e: any) => {
+    e.stopPropagation();
+    Alert.alert(
+      "여행 삭제",
+      "이 여행과 관련된 모든 데이터가 삭제됩니다. 정말 삭제하시겠습니까?",
+      [
+        { text: "취소", style: "cancel" },
+        {
+          text: "삭제",
+          style: "destructive",
+          onPress: () => {
+            deleteTrip(tripId, {
+              onSuccess: () => Alert.alert("성공", "여행이 삭제되었습니다."),
+              onError: (e) => Alert.alert("오류", e.message),
+            });
+          },
+        },
+      ],
+    );
+  };
 
   if (isLoading) {
     return (
@@ -34,7 +69,7 @@ export default function AccountBookScreen() {
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-bold text-slate-text">내 여행 목록</Text>
         <Pressable
-          onPress={handleOpenModal}
+          onPress={handleOpenCreateModal}
           className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
         >
           <Plus size={18} color="#FFFFFF" />
@@ -54,7 +89,7 @@ export default function AccountBookScreen() {
               새로운 여행을 등록하고 가계부를 시작해 보세요!
             </Text>
             <Pressable
-              onPress={handleOpenModal}
+              onPress={handleOpenCreateModal}
               className="bg-primary px-4 py-2 rounded-xl active:opacity-80"
             >
               <Text className="text-white text-xs font-semibold">
@@ -72,9 +107,26 @@ export default function AccountBookScreen() {
               onPress={() => router.push(`/trip/${item.id}` as any)}
               className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm active:opacity-70"
             >
-              <Text className="text-lg font-bold text-slate-text mb-1">
-                {item.name}
-              </Text>
+              <View className="flex-row justify-between items-start mb-1">
+                <Text className="text-lg font-bold text-slate-text flex-1">
+                  {item.name}
+                </Text>
+                <View className="flex-row items-center gap-2">
+                  <Pressable
+                    onPress={(e) => handleOpenEditModal(item, e)}
+                    className="p-1 active:opacity-70"
+                  >
+                    <Pencil size={18} color={COLORS.slate.inactive} />
+                  </Pressable>
+                  <Pressable
+                    onPress={(e) => handleDeleteTrip(item.id, e)}
+                    className="p-1 active:opacity-70"
+                  >
+                    <Trash2 size={18} color={COLORS.budget.danger} />
+                  </Pressable>
+                </View>
+              </View>
+
               <View className="flex-row items-center mb-2">
                 <Calendar size={14} color={COLORS.slate.inactive} />
                 <Text className="text-xs text-slate-inactive ml-1">
@@ -92,7 +144,11 @@ export default function AccountBookScreen() {
         />
       )}
 
-      <CreateTripModal visible={isModalVisible} onClose={handleCloseModal} />
+      <CreateTripModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        editTarget={selectedTrip}
+      />
     </View>
   );
 }
