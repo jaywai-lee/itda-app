@@ -9,7 +9,17 @@ export const useExpenses = (tripId: string) => {
     queryFn: async (): Promise<Expense[]> => {
       const { data, error } = await supabase
         .from("expenses")
-        .select("*")
+        .select(
+          `
+          *,
+          categories (
+            id,
+            name,
+            color,
+            icon
+          )
+        `,
+        )
         .eq("trip_id", tripId)
         .order("spent_at", { ascending: false });
 

@@ -42,4 +42,10 @@ export interface Expense {
   photo_url?: string | null;
   spent_at: string;
   created_at: string;
+  categories?: {
+    id: string;
+    name: string;
+    color?: string | null;
+    icon?: string | null;
+  } | null;
 }

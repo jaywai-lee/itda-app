@@ -82,7 +82,7 @@ export default function TripDetailScreen() {
               <View className="bg-white p-4 rounded-xl border border-slate-border mb-3 flex-row justify-between items-center">
                 <View>
                   <Text className="text-sm font-bold text-slate-text mb-1">
-                    {item.category_id}
+                    {item.categories?.name || "기타"}
                   </Text>
                   {item.memo && (
                     <Text className="text-xs text-slate-inactive">
