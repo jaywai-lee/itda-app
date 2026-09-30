@@ -28,6 +28,7 @@ interface CreateTripModalViewProps {
   formState: CreateTripFormState;
   handlers: CreateTripFormHandlers;
   isPending: boolean;
+  isEditMode: boolean;
 }
 
 export const CreateTripModalView = ({
@@ -36,10 +37,11 @@ export const CreateTripModalView = ({
   formState,
   handlers,
   isPending,
+  isEditMode,
 }: CreateTripModalViewProps) => {
   return (
     <Modal visible={visible} onClose={onClose}>
-      <Modal.Header title="새 여행 추가" />
+      <Modal.Header title={isEditMode ? "여행 정보 수정" : "새 여행 추가"} />
       <Modal.Body>
         <Text className="text-sm font-semibold text-slate-text mb-1">
           여행 이름
@@ -135,8 +137,7 @@ export const CreateTripModalView = ({
               }
               mode="date"
               display={Platform.OS === "ios" ? "inline" : "default"}
-              onValueChange={handlers.onSelectDate}
-              onDismiss={handlers.onDismissPicker}
+              onChange={handlers.onSelectDate}
             />
           </View>
         )}
@@ -149,7 +150,11 @@ export const CreateTripModalView = ({
           className="flex-1 bg-primary p-4 rounded-xl items-center active:opacity-80"
         >
           <Text className="text-white font-bold text-base">
-            {isPending ? "저장 중..." : "여행 등록하기"}
+            {isPending
+              ? "저장 중..."
+              : isEditMode
+                ? "수정 완료"
+                : "여행 등록하기"}
           </Text>
         </Pressable>
       </Modal.Footer>

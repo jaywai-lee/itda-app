@@ -1,15 +1,22 @@
 import { useCreateTrip } from "@/hooks/trip/useCreateTrip";
-import { format } from "date-fns";
-import { useState } from "react";
+import { useUpdateTrip } from "@/hooks/trip/useUpdateTrip";
+import { Trip } from "@/types/database";
+import { format, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
 import { CreateTripModalView } from "./CreateTripModalView";
 
 interface CreateTripModalProps {
   visible: boolean;
   onClose: () => void;
+  editTarget?: Trip | null;
 }
 
-export const CreateTripModal = ({ visible, onClose }: CreateTripModalProps) => {
+export const CreateTripModal = ({
+  visible,
+  onClose,
+  editTarget,
+}: CreateTripModalProps) => {
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
@@ -17,16 +24,31 @@ export const CreateTripModal = ({ visible, onClose }: CreateTripModalProps) => {
   const [totalBudget, setTotalBudget] = useState("");
   const [pickerType, setPickerType] = useState<"start" | "end" | null>(null);
 
-  const { mutate: createTrip, isPending } = useCreateTrip();
+  const { mutate: createTrip, isPending: isCreating } = useCreateTrip();
+  const { mutate: updateTrip, isPending: isUpdating } = useUpdateTrip();
 
-  const handleResetForm = () => {
-    setName("");
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setCurrency("KRW");
-    setTotalBudget("");
-    setPickerType(null);
-  };
+  useEffect(() => {
+    if (visible) {
+      if (editTarget) {
+        setName(editTarget.name);
+        setStartDate(
+          editTarget.start_date ? parseISO(editTarget.start_date) : new Date(),
+        );
+        setEndDate(
+          editTarget.end_date ? parseISO(editTarget.end_date) : new Date(),
+        );
+        setCurrency(editTarget.currency);
+        setTotalBudget(editTarget.total_budget.toString());
+      } else {
+        setName("");
+        setStartDate(new Date());
+        setEndDate(new Date());
+        setCurrency("KRW");
+        setTotalBudget("");
+      }
+      setPickerType(null);
+    }
+  }, [visible, editTarget]);
 
   const handleSelectDate = (event: any, selectedDate?: Date) => {
     if (Platform.OS === "android") {
@@ -59,25 +81,36 @@ export const CreateTripModal = ({ visible, onClose }: CreateTripModalProps) => {
       return;
     }
 
-    createTrip(
-      {
-        name,
-        start_date: format(startDate, "yyyy-MM-dd"),
-        end_date: format(endDate, "yyyy-MM-dd"),
-        currency,
-        total_budget: Number(totalBudget) || 0,
-      },
-      {
+    const tripData = {
+      name,
+      start_date: format(startDate, "yyyy-MM-dd"),
+      end_date: format(endDate, "yyyy-MM-dd"),
+      currency,
+      total_budget: Number(totalBudget) || 0,
+    };
+
+    if (editTarget) {
+      updateTrip(
+        { id: editTarget.id, ...tripData },
+        {
+          onSuccess: () => {
+            Alert.alert("성공", "여행 정보가 수정되었습니다.");
+            onClose();
+          },
+          onError: (e) =>
+            Alert.alert("오류", e.message || "여행 수정에 실패했습니다."),
+        },
+      );
+    } else {
+      createTrip(tripData, {
         onSuccess: () => {
           Alert.alert("성공", "새로운 여행이 등록되었습니다.");
-          handleResetForm();
           onClose();
         },
-        onError: (error) => {
-          Alert.alert("오류", error.message || "여행 등록에 실패했습니다.");
-        },
-      },
-    );
+        onError: (e) =>
+          Alert.alert("오류", e.message || "여행 등록에 실패했습니다."),
+      });
+    }
   };
 
   return (
@@ -101,7 +134,8 @@ export const CreateTripModal = ({ visible, onClose }: CreateTripModalProps) => {
         onDismissPicker: handleDismissPicker,
         onSubmit: handleSubmit,
       }}
-      isPending={isPending}
+      isPending={isCreating || isUpdating}
+      isEditMode={!!editTarget}
     />
   );
 };
