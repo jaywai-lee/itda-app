@@ -3,6 +3,7 @@ import { CreateExpenseModal } from "@/components/expense/CreateExpenseModal";
 import { COLORS } from "@/constants/colors";
 import { useExpenses } from "@/hooks/expense/useExpenses";
 import { useTrips } from "@/hooks/trip/useTrips";
+import { Expense } from "@/types/database";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, Plus } from "lucide-react-native";
 import { useState } from "react";
@@ -18,14 +19,25 @@ export default function TripDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const { data: trips } = useTrips();
   const trip = trips?.find((t) => t.id === id);
-  const { data: expenses, isLoading } = useExpenses(id);
+  const { data: expenses, isLoading } = useExpenses(id as string);
 
   if (!trip) return null;
 
   const totalSpent = expenses?.reduce((acc, cur) => acc + cur.amount, 0) || 0;
+
+  const handleOpenCreateModal = () => {
+    setSelectedExpense(null);
+    setIsModalVisible(true);
+  };
+
+  const handleOpenEditModal = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsModalVisible(true);
+  };
 
   return (
     <View className="flex-1 bg-slate-bg">
@@ -52,7 +64,7 @@ export default function TripDetailScreen() {
         <View className="flex-row justify-between items-center mb-3">
           <Text className="text-lg font-bold text-slate-text">지출 내역</Text>
           <Pressable
-            onPress={() => setIsModalVisible(true)}
+            onPress={handleOpenCreateModal}
             className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
           >
             <Plus size={16} color="#FFFFFF" />
@@ -79,7 +91,10 @@ export default function TripDetailScreen() {
             data={expenses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View className="bg-white p-4 rounded-xl border border-slate-border mb-3 flex-row justify-between items-center">
+              <Pressable
+                onPress={() => handleOpenEditModal(item)}
+                className="bg-white p-4 rounded-xl border border-slate-border mb-3 flex-row justify-between items-center active:opacity-75"
+              >
                 <View>
                   <Text className="text-sm font-bold text-slate-text mb-1">
                     {item.categories?.name || "기타"}
@@ -93,7 +108,7 @@ export default function TripDetailScreen() {
                 <Text className="text-base font-bold text-slate-text">
                   {item.amount.toLocaleString()} {item.currency}
                 </Text>
-              </View>
+              </Pressable>
             )}
           />
         )}
@@ -104,6 +119,7 @@ export default function TripDetailScreen() {
         currency={trip.currency}
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
+        editTarget={selectedExpense}
       />
     </View>
   );
