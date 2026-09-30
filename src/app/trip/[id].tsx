@@ -1,9 +1,11 @@
 import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
+import { CreateExpenseModal } from "@/components/expense/CreateExpenseModal";
 import { COLORS } from "@/constants/colors";
 import { useExpenses } from "@/hooks/expense/useExpenses";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, Plus } from "lucide-react-native";
+import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -15,6 +17,7 @@ import {
 export default function TripDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { data: trips } = useTrips();
   const trip = trips?.find((t) => t.id === id);
@@ -48,7 +51,10 @@ export default function TripDetailScreen() {
 
         <View className="flex-row justify-between items-center mb-3">
           <Text className="text-lg font-bold text-slate-text">지출 내역</Text>
-          <Pressable className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80">
+          <Pressable
+            onPress={() => setIsModalVisible(true)}
+            className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
+          >
             <Plus size={16} color="#FFFFFF" />
             <Text className="text-white font-semibold ml-1 text-xs">
               지출 추가
@@ -92,6 +98,13 @@ export default function TripDetailScreen() {
           />
         )}
       </View>
+
+      <CreateExpenseModal
+        tripId={trip.id}
+        currency={trip.currency}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
     </View>
   );
 }
