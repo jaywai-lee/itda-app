@@ -60,7 +60,7 @@ export const BudgetProgressBar = ({
         />
       </View>
 
-      {spentPercentage >= 100 && (
+      {spentPercentage > 100 && (
         <Text className="text-xs text-budget-danger mt-1.5 font-semibold text-right">
           예산을 초과했습니다!
         </Text>

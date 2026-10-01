@@ -135,6 +135,8 @@ export default function TripDetailScreen() {
       <CreateExpenseModal
         tripId={trip.id}
         currency={trip.currency}
+        totalBudget={trip.total_budget}
+        currentTotalSpent={totalSpent}
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         editTarget={selectedExpense}

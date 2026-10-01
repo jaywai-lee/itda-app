@@ -12,6 +12,8 @@ import { CreateExpenseModalView } from "./CreateExpenseModalView";
 interface CreateExpenseModalProps {
   tripId: string;
   currency: string;
+  totalBudget: number;
+  currentTotalSpent: number;
   visible: boolean;
   onClose: () => void;
   editTarget?: Expense | null;
@@ -20,6 +22,8 @@ interface CreateExpenseModalProps {
 export const CreateExpenseModal = ({
   tripId,
   currency,
+  totalBudget,
+  currentTotalSpent,
   visible,
   onClose,
   editTarget,
@@ -84,6 +88,32 @@ export const CreateExpenseModal = ({
     if (!amount || !categoryId) {
       Alert.alert("알림", "금액과 카테고리를 입력해 주세요.");
       return;
+    }
+
+    const numericAmount = Number(amount);
+
+    const effectiveCurrentSpent = editTarget
+      ? currentTotalSpent - editTarget.amount
+      : currentTotalSpent;
+    const nextTotalSpent = effectiveCurrentSpent + numericAmount;
+
+    if (totalBudget > 0 && nextTotalSpent > totalBudget) {
+      const isConfirmed = await new Promise((resolve) => {
+        Alert.alert(
+          "⚠️ 예산 초과 경고",
+          `이 지출을 등록하면 총 예산(${totalBudget.toLocaleString()} ${currency})을 초과하게 됩니다.\n그래도 등록하시겠습니까?`,
+          [
+            { text: "취소", onPress: () => resolve(false), style: "cancel" },
+            {
+              text: "등록",
+              onPress: () => resolve(true),
+              style: "destructive",
+            },
+          ],
+        );
+      });
+
+      if (!isConfirmed) return;
     }
 
     try {
