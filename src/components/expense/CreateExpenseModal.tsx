@@ -3,6 +3,7 @@ import { useCreateExpense } from "@/hooks/expense/useCreateExpense";
 import { useDeleteExpense } from "@/hooks/expense/useDeleteExpense";
 import { useUpdateExpense } from "@/hooks/expense/useUpdateExpense";
 import { Expense } from "@/types/database";
+import { fetchExchangeRate } from "@/utils/currency";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -27,6 +28,7 @@ export const CreateExpenseModal = ({
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [memo, setMemo] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const { data: categories = [], isLoading: isLoadingCategories } =
     useCategories(tripId);
@@ -78,47 +80,55 @@ export const CreateExpenseModal = ({
     setPhotoUrl("");
   };
 
-  const handleSubmit = () => {
-    if (!amount || isNaN(Number(amount))) {
-      Alert.alert("알림", "올바른 지출 금액을 입력해 주세요.");
-      return;
-    }
-    if (!categoryId) {
-      Alert.alert("알림", "카테고리를 선택해 주세요.");
+  const handleSubmit = async () => {
+    if (!amount || !categoryId) {
+      Alert.alert("알림", "금액과 카테고리를 입력해 주세요.");
       return;
     }
 
-    const expenseData = {
-      trip_id: tripId,
-      amount: Number(amount),
-      currency,
-      category_id: categoryId,
-      memo,
-      photo_url: photoUrl,
-    };
+    try {
+      setIsCalculating(true);
 
-    if (editTarget) {
-      updateExpense(
-        { id: editTarget.id, ...expenseData },
-        {
-          onSuccess: () => {
-            Alert.alert("성공", "지출 내역이 수정되었습니다.");
-            onClose();
+      const rate = await fetchExchangeRate(currency);
+      const amountKrw = Math.round(Number(amount) * rate);
+
+      const expenseData = {
+        trip_id: tripId,
+        amount: Number(amount),
+        currency,
+        amount_krw: amountKrw,
+        category_id: categoryId,
+        memo,
+        photo_url: photoUrl,
+      };
+
+      if (editTarget) {
+        updateExpense(
+          { id: editTarget.id, ...expenseData },
+          {
+            onSuccess: () => {
+              Alert.alert("성공", "지출 내역이 수정되었습니다.");
+              onClose();
+            },
+            onError: (e) => Alert.alert("오류", e.message),
           },
-          onError: (e) => Alert.alert("오류", e.message),
-        },
-      );
-    } else {
-      createExpense(
-        { ...expenseData, spent_at: new Date().toISOString() },
-        {
-          onSuccess: () => {
-            Alert.alert("성공", "지출 내역이 등록되었습니다.");
-            onClose();
+        );
+      } else {
+        createExpense(
+          { ...expenseData, spent_at: new Date().toISOString() },
+          {
+            onSuccess: () => {
+              Alert.alert("성공", "지출 내역이 등록되었습니다.");
+              onClose();
+            },
+            onError: (e) => Alert.alert("오류", e.message),
           },
-          onError: (e) => Alert.alert("오류", e.message),
-        },
-      );
+        );
+      }
+    } catch (error: any) {
+      Alert.alert("환율 오류", error.message || "결제 처리에 실패했습니다.");
+    } finally {
+      setIsCalculating(false);
     }
   };
 
