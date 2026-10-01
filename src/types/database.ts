@@ -38,6 +38,7 @@ export interface Expense {
   category_id?: string | null;
   amount: number;
   currency: string;
+  amount_krw?: number | null;
   memo?: string | null;
   photo_url?: string | null;
   spent_at: string;
