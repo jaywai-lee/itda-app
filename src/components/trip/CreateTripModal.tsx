@@ -1,3 +1,4 @@
+import { COUNTRIES } from "@/constants/countries";
 import { useCreateTrip } from "@/hooks/trip/useCreateTrip";
 import { useUpdateTrip } from "@/hooks/trip/useUpdateTrip";
 import { Trip } from "@/types/database";
@@ -20,9 +21,12 @@ export const CreateTripModal = ({
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [currency, setCurrency] = useState("KRW");
+  const [country, setCountry] = useState<string>(COUNTRIES[0].label);
+  const [currency, setCurrency] = useState<string>(COUNTRIES[0].currency);
   const [totalBudget, setTotalBudget] = useState("");
+
   const [pickerType, setPickerType] = useState<"start" | "end" | null>(null);
+  const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
 
   const { mutate: createTrip, isPending: isCreating } = useCreateTrip();
   const { mutate: updateTrip, isPending: isUpdating } = useUpdateTrip();
@@ -38,15 +42,21 @@ export const CreateTripModal = ({
           editTarget.end_date ? parseISO(editTarget.end_date) : new Date(),
         );
         setCurrency(editTarget.currency);
+        const matchedCountry = COUNTRIES.find(
+          (c) => c.currency === editTarget.currency,
+        );
+        setCountry(matchedCountry ? matchedCountry.label : "직접 입력");
         setTotalBudget(editTarget.total_budget.toString());
       } else {
         setName("");
         setStartDate(new Date());
         setEndDate(new Date());
-        setCurrency("KRW");
+        setCountry(COUNTRIES[0].label);
+        setCurrency(COUNTRIES[0].currency);
         setTotalBudget("");
       }
       setPickerType(null);
+      setIsCountryPickerOpen(false);
     }
   }, [visible, editTarget]);
 
@@ -54,7 +64,6 @@ export const CreateTripModal = ({
     if (Platform.OS === "android") {
       setPickerType(null);
     }
-
     if (selectedDate) {
       if (pickerType === "start") {
         setStartDate(selectedDate);
@@ -71,8 +80,13 @@ export const CreateTripModal = ({
     }
   };
 
-  const handleDismissPicker = () => {
-    setPickerType(null);
+  const handleSelectCountry = (
+    selectedLabel: string,
+    selectedCurrency: string,
+  ) => {
+    setCountry(selectedLabel);
+    setCurrency(selectedCurrency);
+    setIsCountryPickerOpen(false);
   };
 
   const handleSubmit = () => {
@@ -124,14 +138,17 @@ export const CreateTripModal = ({
         currency,
         totalBudget,
         pickerType,
+        country,
+        isCountryPickerOpen,
       }}
       handlers={{
         onChangeName: setName,
-        onChangeCurrency: setCurrency,
         onChangeTotalBudget: setTotalBudget,
         onOpenPicker: setPickerType,
         onSelectDate: handleSelectDate,
-        onDismissPicker: handleDismissPicker,
+        onDismissPicker: () => setPickerType(null),
+        onSelectCountry: handleSelectCountry,
+        onToggleCountryPicker: () => setIsCountryPickerOpen((prev) => !prev),
         onSubmit: handleSubmit,
       }}
       isPending={isCreating || isUpdating}

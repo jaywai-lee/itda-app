@@ -1,5 +1,8 @@
+import { COLORS } from "@/constants/colors";
+import { COUNTRIES } from "@/constants/countries";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
+import { ChevronDown } from "lucide-react-native";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { Modal } from "../common/Modal";
 
@@ -10,15 +13,18 @@ export interface CreateTripFormState {
   currency: string;
   totalBudget: string;
   pickerType: "start" | "end" | null;
+  country: string;
+  isCountryPickerOpen: boolean;
 }
 
 export interface CreateTripFormHandlers {
   onChangeName: (text: string) => void;
-  onChangeCurrency: (text: string) => void;
   onChangeTotalBudget: (text: string) => void;
   onOpenPicker: (type: "start" | "end" | null) => void;
   onSelectDate: (event: any, date?: Date) => void;
   onDismissPicker: () => void;
+  onSelectCountry: (label: string, currency: string) => void;
+  onToggleCountryPicker: () => void;
   onSubmit: () => void;
 }
 
@@ -42,6 +48,7 @@ export const CreateTripModalView = ({
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title={isEditMode ? "여행 정보 수정" : "새 여행 추가"} />
+
       <Modal.Body>
         <Text className="text-sm font-semibold text-slate-text mb-1">
           여행 이름
@@ -52,6 +59,47 @@ export const CreateTripModalView = ({
           onChangeText={handlers.onChangeName}
           className="border border-slate-border rounded-xl p-3 mb-4 text-slate-text"
         />
+
+        <View className="mb-4 z-50">
+          <Text className="text-sm font-semibold text-slate-text mb-1">
+            여행 국가
+          </Text>
+          <Pressable
+            onPress={handlers.onToggleCountryPicker}
+            className="border border-slate-border rounded-xl p-3 bg-white flex-row justify-between items-center active:bg-slate-bg"
+          >
+            <Text className="text-slate-text">{formState.country}</Text>
+            <View className="flex-row items-center gap-2">
+              <Text className="text-xs font-bold text-slate-inactive">
+                {formState.currency}
+              </Text>
+              <ChevronDown size={18} color={COLORS.slate.inactive} />
+            </View>
+          </Pressable>
+
+          {formState.isCountryPickerOpen && (
+            <View className="absolute top-16 left-0 right-0 bg-white border border-slate-border rounded-xl shadow-lg z-50 overflow-hidden">
+              {COUNTRIES.map((item, index) => (
+                <Pressable
+                  key={item.currency}
+                  onPress={() =>
+                    handlers.onSelectCountry(item.label, item.currency)
+                  }
+                  className={`p-3 flex-row justify-between items-center active:bg-slate-bg ${
+                    index !== COUNTRIES.length - 1
+                      ? "border-b border-slate-border"
+                      : ""
+                  }`}
+                >
+                  <Text className="text-slate-text">{item.label}</Text>
+                  <Text className="text-xs text-slate-inactive">
+                    {item.currency}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
 
         <View className="flex-row gap-3 mb-4">
           <View className="flex-1">
@@ -67,7 +115,6 @@ export const CreateTripModalView = ({
               </Text>
             </Pressable>
           </View>
-
           <View className="flex-1">
             <Text className="text-sm font-semibold text-slate-text mb-1">
               종료일
@@ -83,31 +130,17 @@ export const CreateTripModalView = ({
           </View>
         </View>
 
-        <View className="flex-row gap-3">
-          <View className="w-28">
-            <Text className="text-sm font-semibold text-slate-text mb-1">
-              통화
-            </Text>
-            <TextInput
-              placeholder="KRW"
-              value={formState.currency}
-              onChangeText={handlers.onChangeCurrency}
-              className="border border-slate-border rounded-xl p-3 text-slate-text uppercase"
-            />
-          </View>
-
-          <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-text mb-1">
-              총 예산
-            </Text>
-            <TextInput
-              placeholder="0"
-              keyboardType="numeric"
-              value={formState.totalBudget}
-              onChangeText={handlers.onChangeTotalBudget}
-              className="border border-slate-border rounded-xl p-3 text-slate-text"
-            />
-          </View>
+        <View className="mb-6">
+          <Text className="text-sm font-semibold text-slate-text mb-1">
+            총 예산 ({formState.currency})
+          </Text>
+          <TextInput
+            placeholder="0"
+            keyboardType="numeric"
+            value={formState.totalBudget}
+            onChangeText={handlers.onChangeTotalBudget}
+            className="border border-slate-border rounded-xl p-3 text-slate-text"
+          />
         </View>
 
         {formState.pickerType && (
