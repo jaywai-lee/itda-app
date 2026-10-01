@@ -1,4 +1,5 @@
 import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
+import { CategoryProgressBar } from "@/components/account-book/CategoryProgressBar";
 import { CreateExpenseModal } from "@/components/expense/CreateExpenseModal";
 import { COLORS } from "@/constants/colors";
 import { useExpenses } from "@/hooks/expense/useExpenses";
@@ -59,6 +60,15 @@ export default function TripDetailScreen() {
             totalSpent={totalSpent}
             currency={trip.currency}
           />
+
+          {expenses && expenses.length > 0 && (
+            <View className="mt-4 pt-4 border-t border-slate-bg">
+              <CategoryProgressBar
+                expenses={expenses}
+                currency={trip.currency}
+              />
+            </View>
+          )}
         </View>
 
         <View className="flex-row justify-between items-center mb-3">
