@@ -115,9 +115,17 @@ export default function TripDetailScreen() {
                     </Text>
                   )}
                 </View>
-                <Text className="text-base font-bold text-slate-text">
-                  {item.amount.toLocaleString()} {item.currency}
-                </Text>
+
+                <View className="items-end">
+                  <Text className="text-base font-bold text-slate-text">
+                    {item.amount.toLocaleString()} {item.currency}
+                  </Text>
+                  {item.currency !== "KRW" && item.amount_krw != null && (
+                    <Text className="text-xs text-slate-inactive mt-0.5">
+                      = {item.amount_krw.toLocaleString()} KRW
+                    </Text>
+                  )}
+                </View>
               </Pressable>
             )}
           />
