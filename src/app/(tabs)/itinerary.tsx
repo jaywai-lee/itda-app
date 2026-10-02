@@ -1,8 +1,9 @@
+import { ItineraryMapView } from "@/components/itinerary/ItineraryMapView";
 import { COLORS } from "@/constants/colors";
 import { useItineraries } from "@/hooks/itinerary/useItineraries";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { cn } from "@/utils/cn";
-import { MapPin, Plus } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -84,13 +85,7 @@ export default function ItineraryScreen() {
       </View>
 
       <View className="flex-1 relative">
-        {/** TODO : 구글 지도 컴포넌트 추가 */}
-        <View className="flex-1 bg-slate-200 justify-center items-center">
-          <MapPin size={48} color={COLORS.slate.inactive} />
-          <Text className="mt-2 text-slate-inactive font-semibold">
-            지도 영역
-          </Text>
-        </View>
+        <ItineraryMapView itineraries={itineraries || []} />
 
         <View className="absolute bottom-0 left-0 right-0 h-2/5 bg-white rounded-t-3xl shadow-lg border-t border-slate-border p-4">
           <View className="flex-row justify-between items-center mb-4">
