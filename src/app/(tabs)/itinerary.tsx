@@ -1,3 +1,4 @@
+import { AddPlaceModal } from "@/components/itinerary/AddPlaceModal";
 import { ItineraryMapView } from "@/components/itinerary/ItineraryMapView";
 import { COLORS } from "@/constants/colors";
 import { useItineraries } from "@/hooks/itinerary/useItineraries";
@@ -16,6 +17,7 @@ import {
 
 export default function ItineraryScreen() {
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
   const { data: trips, isLoading: isTripsLoading } = useTrips();
   const { data: itineraries, isLoading: isItinerariesLoading } = useItineraries(
@@ -90,7 +92,10 @@ export default function ItineraryScreen() {
         <View className="absolute bottom-0 left-0 right-0 h-2/5 bg-white rounded-t-3xl shadow-lg border-t border-slate-border p-4">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-lg font-bold text-slate-text">상세 일정</Text>
-            <Pressable className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80">
+            <Pressable
+              onPress={() => setIsAddModalVisible(true)}
+              className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
+            >
               <Plus size={16} color="#FFFFFF" />
               <Text className="text-white font-semibold ml-1 text-xs">
                 장소 추가
@@ -128,6 +133,12 @@ export default function ItineraryScreen() {
           )}
         </View>
       </View>
+
+      <AddPlaceModal
+        visible={isAddModalVisible}
+        onClose={() => setIsAddModalVisible(false)}
+        tripId={selectedTripId || ""}
+      />
     </View>
   );
 }
