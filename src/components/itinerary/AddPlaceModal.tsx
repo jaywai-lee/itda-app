@@ -1,3 +1,4 @@
+import { useCreateItinerary } from "@/hooks/itinerary/useCreateItinerary";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -21,6 +22,8 @@ export const AddPlaceModal = ({
   const [visitDate, setVisitDate] = useState(new Date());
   const [memo, setMemo] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const { mutate: createItinerary, isPending } = useCreateItinerary();
 
   const handleResetForm = () => {
     setPlaceName("");
@@ -52,19 +55,27 @@ export const AddPlaceModal = ({
       return;
     }
 
-    const newItineraryData = {
-      trip_id: tripId,
-      place_name: placeName,
-      lat,
-      lng,
-      visit_date: format(visitDate, "yyyy-MM-dd"),
-      memo,
-    };
-
-    console.log("저장될 일정 데이터:", newItineraryData);
-    Alert.alert("임시 성공", "장소 데이터가 폼에서 성공적으로 추출되었습니다.");
-    handleResetForm();
-    onClose();
+    createItinerary(
+      {
+        trip_id: tripId,
+        title: placeName,
+        place_name: placeName,
+        lat,
+        lng,
+        visit_date: format(visitDate, "yyyy-MM-dd"),
+        memo,
+        order_index: 0,
+      },
+      {
+        onSuccess: () => {
+          handleResetForm();
+          onClose();
+        },
+        onError: (e) => {
+          Alert.alert("오류", e.message || "장소 등록에 실패했습니다.");
+        },
+      },
+    );
   };
 
   return (
@@ -79,7 +90,7 @@ export const AddPlaceModal = ({
         onChangeDate: handleChangeDate,
         onSubmit: handleSubmit,
       }}
-      isPending={false}
+      isPending={isPending}
     />
   );
 };
