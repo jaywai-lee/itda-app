@@ -27,6 +27,7 @@ interface AddPlaceModalViewProps {
   formState: AddPlaceFormState;
   handlers: AddPlaceFormHandlers;
   isPending?: boolean;
+  isEditMode?: boolean;
 }
 
 export const AddPlaceModalView = ({
@@ -35,10 +36,11 @@ export const AddPlaceModalView = ({
   formState,
   handlers,
   isPending = false,
+  isEditMode,
 }: AddPlaceModalViewProps) => {
   return (
     <Modal visible={visible} onClose={onClose}>
-      <Modal.Header title="장소 추가" />
+      <Modal.Header title={isEditMode ? "장소 수정" : "장소 추가"} />
 
       <Modal.Body>
         <View className="mb-4 z-50 h-64">
