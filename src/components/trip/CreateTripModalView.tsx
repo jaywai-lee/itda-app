@@ -170,7 +170,8 @@ export const CreateTripModalView = ({
               }
               mode="date"
               display={Platform.OS === "ios" ? "inline" : "default"}
-              onChange={handlers.onSelectDate}
+              onValueChange={handlers.onSelectDate}
+              onDismiss={handlers.onDismissPicker}
             />
           </View>
         )}

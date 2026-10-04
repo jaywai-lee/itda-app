@@ -49,7 +49,9 @@ export default function TabLayout() {
         options={{
           title: "가계부",
           headerTitle: "여행 가계부",
-          tabBarIcon: ({ color }) => <Wallet size={22} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Wallet size={22} color={color as string} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -57,7 +59,9 @@ export default function TabLayout() {
         options={{
           title: "일정",
           headerTitle: "여행 일정",
-          tabBarIcon: ({ color }) => <Calendar size={22} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Calendar size={22} color={color as string} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -65,7 +69,7 @@ export default function TabLayout() {
         options={{
           title: "마이페이지",
           headerTitle: "내 정보",
-          tabBarIcon: ({ color }) => <User size={22} color={color} />,
+          tabBarIcon: ({ color }) => <User size={22} color={color as string} />,
         }}
       />
     </Tabs>
