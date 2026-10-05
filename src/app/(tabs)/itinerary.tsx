@@ -1,35 +1,13 @@
-import { AddPlaceModal } from "@/components/itinerary/AddPlaceModal";
-import { ItineraryMapView } from "@/components/itinerary/ItineraryMapView";
-import { COLORS } from "@/constants/colors";
+import { ItineraryView } from "@/components/itinerary/ItineraryView";
 import { useDeleteItinerary } from "@/hooks/itinerary/useDeleteItinerary";
 import { useItineraries } from "@/hooks/itinerary/useItineraries";
 import { useUpdateItineraryOrder } from "@/hooks/itinerary/useUpdateItineraryOrder";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Itinerary } from "@/types/database";
-import { cn } from "@/utils/cn";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Alert, LayoutChangeEvent } from "react-native";
+import { Gesture } from "react-native-gesture-handler";
 import {
-  GripVertical,
-  MapPin,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react-native";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  LayoutChangeEvent,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator,
-} from "react-native-draggable-flatlist";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {
   Easing,
   useAnimatedStyle,
   useDerivedValue,
@@ -42,7 +20,7 @@ export default function ItineraryScreen() {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [editTarget, setEditTarget] = useState<Itinerary | null>(null);
   const [localItineraries, setLocalItineraries] = useState<Itinerary[]>([]);
-  const [isMeasured, setIsMeasured] = useState(false);
+  const [isMeasured, setIsMeasured] = useState<boolean>(false);
 
   const { data: trips, isLoading: isTripsLoading } = useTrips();
   const { data: itineraries, isLoading: isItinerariesLoading } = useItineraries(
@@ -57,12 +35,18 @@ export default function ItineraryScreen() {
     }
   }, [itineraries]);
 
-  const containerHeight = useSharedValue(0);
-  const handleHeight = useSharedValue(36);
-  const hasInitialized = useRef(false);
+  useEffect(() => {
+    if (trips && trips.length > 0 && !selectedTripId) {
+      setSelectedTripId(trips[0].id);
+    }
+  }, [trips]);
 
-  const translateY = useSharedValue(0);
-  const startY = useSharedValue(0);
+  const containerHeight = useSharedValue<number>(0);
+  const handleHeight = useSharedValue<number>(36);
+  const hasInitialized = useRef<boolean>(false);
+
+  const translateY = useSharedValue<number>(0);
+  const startY = useSharedValue<number>(0);
 
   const expandedY = 0;
   const defaultY = useDerivedValue(() => containerHeight.value * 0.45);
@@ -128,12 +112,6 @@ export default function ItineraryScreen() {
     transform: [{ translateY: translateY.value }],
   }));
 
-  useEffect(() => {
-    if (trips && trips.length > 0 && !selectedTripId) {
-      setSelectedTripId(trips[0].id);
-    }
-  }, [trips]);
-
   const handleOpenCreateModal = () => {
     setEditTarget(null);
     setIsAddModalVisible(true);
@@ -170,210 +148,30 @@ export default function ItineraryScreen() {
     updateOrder({ tripId: selectedTripId, updates });
   };
 
-  const renderItem = useCallback(
-    ({ item, getIndex, drag, isActive }: RenderItemParams<Itinerary>) => {
-      const index = getIndex() ?? 0;
-
-      return (
-        <ScaleDecorator>
-          <View className="flex-row mb-3 pl-2">
-            <View className="items-center mr-3 mt-1.5">
-              <View className="w-3 h-3 rounded-full bg-primary" />
-              {index !== localItineraries.length - 1 && (
-                <View className="w-0.5 flex-1 bg-slate-border mt-1" />
-              )}
-            </View>
-
-            <View
-              className={cn(
-                "flex-1 bg-white p-3.5 rounded-xl border flex-row justify-between items-center",
-                isActive
-                  ? "border-primary shadow-md"
-                  : "border-slate-border shadow-sm",
-              )}
-            >
-              <Pressable
-                onLongPress={drag}
-                delayLongPress={150}
-                className="mr-2 p-1 py-2 active:opacity-60"
-              >
-                <GripVertical
-                  size={16}
-                  color={COLORS.slate.inactive as string}
-                />
-              </Pressable>
-
-              <View className="flex-1 pr-3">
-                <View className="flex-row items-center mb-1">
-                  <MapPin
-                    size={12}
-                    color={COLORS.primary.DEFAULT as string}
-                    className="mr-1"
-                  />
-                  <Text className="font-bold ml-1 text-slate-text">
-                    {item.place_name}
-                  </Text>
-                </View>
-                {item.memo && (
-                  <Text
-                    className="text-xs text-slate-inactive mt-1 ml-5"
-                    numberOfLines={2}
-                  >
-                    {item.memo}
-                  </Text>
-                )}
-              </View>
-
-              <View className="flex-row gap-3">
-                <Pressable
-                  onPress={() => handleOpenEditModal(item)}
-                  className="p-1 active:opacity-60"
-                >
-                  <Pencil size={18} color={COLORS.slate.inactive as string} />
-                </Pressable>
-                <Pressable
-                  onPress={() => handleDeleteItinerary(item.id)}
-                  className="p-1 active:opacity-60"
-                >
-                  <Trash2 size={18} color={COLORS.budget.danger as string} />
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </ScaleDecorator>
-      );
-    },
-    [localItineraries.length, selectedTripId],
-  );
-
-  if (isTripsLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-slate-bg">
-        <ActivityIndicator
-          size="large"
-          color={COLORS.primary.DEFAULT as string}
-        />
-      </View>
-    );
-  }
-
-  if (!trips || trips.length === 0) {
-    return (
-      <View className="flex-1 justify-center items-center bg-slate-bg p-4">
-        <Text className="text-base font-semibold text-slate-text mb-1">
-          등록된 여행이 없습니다.
-        </Text>
-        <Text className="text-sm text-slate-inactive">
-          가계부 탭에서 여행을 먼저 생성해 주세요.
-        </Text>
-      </View>
-    );
-  }
-
   return (
-    <View className="flex-1 bg-slate-bg">
-      <View className="bg-white pt-14 pb-3 border-b border-slate-border z-10 shadow-sm">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
-        >
-          {trips.map((trip) => {
-            const isSelected = trip.id === selectedTripId;
-            return (
-              <Pressable
-                key={trip.id}
-                onPress={() => setSelectedTripId(trip.id)}
-                className={cn(
-                  "px-4 py-2 rounded-full border",
-                  isSelected
-                    ? "bg-primary border-primary"
-                    : "bg-white border-slate-border",
-                )}
-              >
-                <Text
-                  className={cn(
-                    "font-semibold text-sm",
-                    isSelected ? "text-white" : "text-slate-text",
-                  )}
-                >
-                  {trip.name}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      </View>
-
-      <View className="flex-1 relative" onLayout={onContainerLayout}>
-        <ItineraryMapView itineraries={itineraries || []} />
-
-        {isMeasured && (
-          <Animated.View
-            style={sheetStyle}
-            className="absolute bottom-0 left-0 right-0 bg-slate-bg shadow-2xl border-t border-slate-border"
-          >
-            <GestureDetector gesture={panGesture}>
-              <View
-                onLayout={onHandleLayout}
-                className="w-full pt-3 pb-2.5 items-center bg-transparent z-10"
-              >
-                <View className="w-12 h-1.5 bg-slate-300 rounded-full" />
-              </View>
-            </GestureDetector>
-
-            <View className="flex-row justify-between px-4 pb-4 items-center">
-              <Text className="text-lg font-bold text-slate-text">
-                상세 일정
-              </Text>
-              <Pressable
-                onPress={handleOpenCreateModal}
-                className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
-              >
-                <Plus size={16} color="#FFFFFF" />
-                <Text className="text-white font-semibold ml-1 text-xs">
-                  장소 추가
-                </Text>
-              </Pressable>
-            </View>
-
-            {isItinerariesLoading ? (
-              <ActivityIndicator
-                size="small"
-                color={COLORS.primary.DEFAULT as string}
-                className="mt-4"
-              />
-            ) : localItineraries.length === 0 ? (
-              <View className="flex-1 justify-center items-center">
-                <Text className="text-slate-inactive text-sm">
-                  아직 등록된 일정이 없습니다.
-                </Text>
-              </View>
-            ) : (
-              <View style={{ flex: 1 }}>
-                <DraggableFlatList
-                  data={localItineraries}
-                  keyExtractor={(item) => item.id}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: 16,
-                    paddingBottom: 100,
-                  }}
-                  onDragEnd={handleDragEnd}
-                  renderItem={renderItem}
-                />
-              </View>
-            )}
-          </Animated.View>
-        )}
-      </View>
-
-      <AddPlaceModal
-        visible={isAddModalVisible}
-        onClose={() => setIsAddModalVisible(false)}
-        tripId={selectedTripId || ""}
-        editTarget={editTarget}
-      />
-    </View>
+    <ItineraryView
+      state={{
+        trips,
+        selectedTripId,
+        localItineraries,
+        isTripsLoading,
+        isItinerariesLoading,
+        isAddModalVisible,
+        editTarget,
+        isMeasured,
+        sheetStyle,
+      }}
+      handlers={{
+        onSelectTrip: setSelectedTripId,
+        onContainerLayout,
+        onHandleLayout,
+        onOpenCreateModal: handleOpenCreateModal,
+        onOpenEditModal: handleOpenEditModal,
+        onDeleteItinerary: handleDeleteItinerary,
+        onDragEnd: handleDragEnd,
+        onCloseAddModal: () => setIsAddModalVisible,
+      }}
+      panGesture={panGesture}
+    />
   );
 }
