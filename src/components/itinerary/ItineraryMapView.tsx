@@ -8,6 +8,11 @@ interface ItineraryMapViewProps {
   itineraries: Itinerary[];
 }
 
+interface ValidCoordinates {
+  latitude: number;
+  longitude: number;
+}
+
 const DEFAULT_REGION = {
   latitude: 35.6585805,
   longitude: 139.7454329,
@@ -19,29 +24,34 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
   const mapRef = useRef<MapView>(null);
 
   const validItineraries =
-    itineraries?.filter((item) => item.lat !== null && item.lng !== null) || [];
+    itineraries?.filter(
+      (item): item is Itinerary & { lat: number; lng: number } =>
+        item.lat !== null && item.lng !== null,
+    ) || [];
 
   useEffect(() => {
-    if (validItineraries.length > 0 && mapRef.current) {
-      const coordinates = validItineraries.map((item) => ({
-        latitude: item.lat as number,
-        longitude: item.lng as number,
-      }));
+    if (validItineraries.length === 0 || !mapRef.current) return;
 
-      setTimeout(() => {
-        mapRef.current?.fitToCoordinates(coordinates, {
-          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-          animated: true,
-        });
-      }, 500);
-    }
+    const coordinates: ValidCoordinates[] = validItineraries.map((item) => ({
+      latitude: item.lat,
+      longitude: item.lng,
+    }));
+
+    const timer = setTimeout(() => {
+      mapRef.current?.fitToCoordinates(coordinates, {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [itineraries]);
 
   const initialRegion =
     validItineraries.length > 0
       ? {
-          latitude: validItineraries[0].lat as number,
-          longitude: validItineraries[0].lng as number,
+          latitude: validItineraries[0].lat,
+          longitude: validItineraries[0].lng,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }
@@ -54,12 +64,12 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
         style={{ width: "100%", height: "100%" }}
         initialRegion={initialRegion}
       >
-        {itineraries?.map((item) => (
+        {validItineraries?.map((item) => (
           <Marker
             key={item.id}
             coordinate={{
-              latitude: item.lat as number,
-              longitude: item.lng as number,
+              latitude: item.lat,
+              longitude: item.lng,
             }}
             title={item.place_name || "이름 없는 장소"}
             description={item.memo || ""}

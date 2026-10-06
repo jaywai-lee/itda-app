@@ -14,7 +14,7 @@ export default function TripDetailScreen() {
 
   const { data: trips } = useTrips();
   const trip = trips?.find((t) => t.id === id);
-  const { data: expenses, isLoading } = useExpenses(id as string);
+  const { data: expenses, isLoading } = useExpenses(id);
 
   if (!trip) return null;
 

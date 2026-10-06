@@ -10,7 +10,7 @@ export const useDeleteExpense = () => {
       const { error } = await supabase.from("expenses").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: (_, id, context: any) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.EXPENSES.ALL });
     },
   });

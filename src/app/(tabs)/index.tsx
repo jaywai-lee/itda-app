@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  GestureResponderEvent,
   Pressable,
   Text,
   View,
@@ -29,13 +30,13 @@ export default function AccountBookScreen() {
     setIsModalVisible(true);
   };
 
-  const handleOpenEditModal = (trip: Trip, e: any) => {
+  const handleOpenEditModal = (trip: Trip, e: GestureResponderEvent) => {
     e.stopPropagation();
     setSelectedTrip(trip);
     setIsModalVisible(true);
   };
 
-  const handleDeleteTrip = (tripId: string, e: any) => {
+  const handleDeleteTrip = (tripId: string, e: GestureResponderEvent) => {
     e.stopPropagation();
     Alert.alert(
       "여행 삭제",
@@ -58,14 +59,14 @@ export default function AccountBookScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-BG">
+      <View className="flex-1 justify-center items-center bg-slate-bg">
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-slate-BG p-4">
+    <View className="flex-1 bg-slate-bg p-4">
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-bold text-slate-text">내 여행 목록</Text>
         <Pressable
@@ -104,7 +105,12 @@ export default function AccountBookScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Pressable
-              onPress={() => router.push(`/trip/${item.id}` as any)}
+              onPress={() =>
+                router.push({
+                  pathname: "/trip/[id]",
+                  params: { id: item.id },
+                })
+              }
               className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm active:opacity-70"
             >
               <View className="flex-row justify-between items-start mb-1">

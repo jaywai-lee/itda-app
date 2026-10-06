@@ -1,7 +1,7 @@
 import { useCreateItinerary } from "@/hooks/itinerary/useCreateItinerary";
 import { useUpdateItinerary } from "@/hooks/itinerary/useUpdateItinerary";
 import { Itinerary } from "@/types/database";
-import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
@@ -63,9 +63,10 @@ export const AddPlaceModal = ({
     setLng(selectedLng);
   };
 
-  const handleChangeDate = (event: DateTimePickerEvent, date?: Date) => {
+  const handleChangeDate = (event: DateTimePickerChangeEvent, date: Date) => {
+    setVisitDate(date);
+
     if (Platform.OS === "android") setIsDatePickerOpen(false);
-    if (date) setVisitDate(date);
   };
 
   const handleSubmit = () => {

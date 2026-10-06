@@ -98,7 +98,7 @@ export const CreateExpenseModal = ({
     const nextTotalSpent = effectiveCurrentSpent + numericAmount;
 
     if (nextTotalSpent > totalBudget) {
-      const isConfirmed = await new Promise((resolve) => {
+      const isConfirmed = await new Promise<boolean>((resolve) => {
         Alert.alert(
           "⚠️ 예산 초과 경고",
           `이 지출을 등록하면 총 예산(${totalBudget.toLocaleString()} ${currency})을 초과하게 됩니다.\n그래도 등록하시겠습니까?`,
@@ -155,8 +155,10 @@ export const CreateExpenseModal = ({
           },
         );
       }
-    } catch (error: any) {
-      Alert.alert("환율 오류", error.message || "결제 처리에 실패했습니다.");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "결제 처리에 실패했습니다.";
+      Alert.alert("환율 오류", errorMessage);
     } finally {
       setIsCalculating(false);
     }
