@@ -1,15 +1,13 @@
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { supabase } from "@/services/supabase";
-import { Trip } from "@/types/database";
+import { TablesInsert } from "@/types/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateTrip = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (
-      newTrip: Omit<Trip, "id" | "user_id" | "created_at">,
-    ) => {
+    mutationFn: async (newTrip: Omit<TablesInsert<"trips">, "user_id">) => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -22,7 +20,7 @@ export const useCreateTrip = () => {
         .single();
 
       if (error) throw error;
-      return data as Trip;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TRIPS.ALL });

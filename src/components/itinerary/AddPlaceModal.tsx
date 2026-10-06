@@ -90,6 +90,7 @@ export const AddPlaceModal = ({
         { id: editTarget.id, ...itineraryData },
         {
           onSuccess: () => {
+            Alert.alert("성공", "일정이 수정되었습니다.");
             onClose();
           },
           onError: (e) => Alert.alert("오류", e.message),
@@ -100,6 +101,7 @@ export const AddPlaceModal = ({
         { ...itineraryData, order_index: 0 },
         {
           onSuccess: () => {
+            Alert.alert("성공", "장소가 일정에 추가되었습니다.");
             onClose();
           },
           onError: (e) => Alert.alert("오류", e.message),

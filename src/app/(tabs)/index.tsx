@@ -152,7 +152,10 @@ export default function AccountBookScreen() {
 
       <CreateTripModal
         visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        onClose={() => {
+          setIsModalVisible(false);
+          setSelectedTrip(null);
+        }}
         editTarget={selectedTrip}
       />
     </View>

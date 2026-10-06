@@ -1,13 +1,13 @@
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { supabase } from "@/services/supabase";
-import { Expense } from "@/types/database";
+import { TablesInsert } from "@/types/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateExpense = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (newExpense: Omit<Expense, "id" | "created_at">) => {
+    mutationFn: async (newExpense: TablesInsert<"expenses">) => {
       const { data, error } = await supabase
         .from("expenses")
         .insert([newExpense])
@@ -15,7 +15,7 @@ export const useCreateExpense = () => {
         .single();
 
       if (error) throw error;
-      return data as Expense;
+      return data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { supabase } from "@/services/supabase";
-import { Itinerary } from "@/types/database";
+import { TablesUpdate } from "@/types/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useUpdateItinerary = () => {
@@ -10,7 +10,7 @@ export const useUpdateItinerary = () => {
     mutationFn: async ({
       id,
       ...updateData
-    }: Partial<Itinerary> & { id: string }) => {
+    }: TablesUpdate<"itineraries"> & { id: string }) => {
       const { data, error } = await supabase
         .from("itineraries")
         .update(updateData)
@@ -19,7 +19,7 @@ export const useUpdateItinerary = () => {
         .single();
 
       if (error) throw error;
-      return data as Itinerary;
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({

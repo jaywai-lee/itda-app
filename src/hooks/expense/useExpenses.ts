@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useExpenses = (tripId: string) => {
   return useQuery({
     queryKey: QUERY_KEYS.EXPENSES.BY_TRIP(tripId),
-    queryFn: async (): Promise<Expense[]> => {
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("expenses")
         .select(
@@ -21,10 +21,11 @@ export const useExpenses = (tripId: string) => {
         `,
         )
         .eq("trip_id", tripId)
-        .order("spent_at", { ascending: false });
+        .order("spent_at", { ascending: false })
+        .overrideTypes<Expense[], { merge: false }>();
 
       if (error) throw error;
-      return data as Expense[];
+      return data;
     },
     enabled: !!tripId,
   });
