@@ -1,13 +1,13 @@
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { supabase } from "@/services/supabase";
-import { Itinerary } from "@/types/database";
+import { TablesInsert } from "@/types/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateItinerary = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (newItinerary: Omit<Itinerary, "id" | "created_at">) => {
+    mutationFn: async (newItinerary: TablesInsert<"itineraries">) => {
       const { data, error } = await supabase
         .from("itineraries")
         .insert([newItinerary])
@@ -15,7 +15,7 @@ export const useCreateItinerary = () => {
         .single();
 
       if (error) throw error;
-      return data as Itinerary;
+      return data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

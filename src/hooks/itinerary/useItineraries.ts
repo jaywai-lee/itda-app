@@ -17,7 +17,7 @@ export const useItineraries = (tripId: string) => {
         .order("order_index", { ascending: true });
 
       if (error) throw error;
-      return data as Itinerary[];
+      return data;
     },
     enabled: !!tripId,
   });

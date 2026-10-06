@@ -1,52 +1,14 @@
-export interface Trip {
-  id: string;
-  user_id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  currency: string;
-  total_budget: number;
-  created_at: string;
-}
+import { Database } from "./supabase";
 
-export interface Itinerary {
-  id: string;
-  trip_id: string;
-  title: string;
-  place_name: string | null;
-  lat: number | null;
-  lng: number | null;
-  visit_date: string;
-  visit_time?: string | null;
-  memo: string | null;
-  order_index: number;
-  created_at: string;
-}
+export type Trip = Database["public"]["Tables"]["trips"]["Row"];
+export type Itinerary = Database["public"]["Tables"]["itineraries"]["Row"];
+export type Category = Database["public"]["Tables"]["categories"]["Row"];
 
-export interface Category {
-  id: string;
-  trip_id?: string | null;
-  name: string;
-  icon?: string | null;
-  color?: string | null;
-}
-
-export interface Expense {
-  id: string;
-  trip_id: string;
-  itinerary_id?: string | null;
-  category_id?: string | null;
-  amount: number;
-  currency: string;
-  amount_krw?: number | null;
-  memo?: string | null;
-  photo_url?: string | null;
-  spent_at: string;
-  created_at: string;
+export type Expense = Database["public"]["Tables"]["expenses"]["Row"] & {
   categories?: {
     id: string;
     name: string;
-    color?: string | null;
-    icon?: string | null;
+    color: string | null;
+    icon: string | null;
   } | null;
-}
+};

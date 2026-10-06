@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { supabase } from "@/services/supabase";
-import { Expense } from "@/types/database";
+import { TablesUpdate } from "@/types/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useUpdateExpense = () => {
@@ -10,7 +10,7 @@ export const useUpdateExpense = () => {
     mutationFn: async ({
       id,
       ...updateData
-    }: Partial<Expense> & { id: string }) => {
+    }: TablesUpdate<"expenses"> & { id: string }) => {
       const { data, error } = await supabase
         .from("expenses")
         .update(updateData)
@@ -19,7 +19,7 @@ export const useUpdateExpense = () => {
         .single();
 
       if (error) throw error;
-      return data as Expense;
+      return data;
     },
     onSuccess: (_, variables) => {
       if (variables.trip_id) {

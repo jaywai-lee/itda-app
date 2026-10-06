@@ -1,3 +1,4 @@
+import { Database } from "@/types/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
 import { Platform } from "react-native";
@@ -35,7 +36,7 @@ const safeStorage = {
   },
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: safeStorage,
     autoRefreshToken: true,

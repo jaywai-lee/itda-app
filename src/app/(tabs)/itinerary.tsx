@@ -129,7 +129,16 @@ export default function ItineraryScreen() {
         text: "삭제",
         style: "destructive",
         onPress: () => {
-          if (selectedTripId) deleteItinerary({ id, tripId: selectedTripId });
+          if (selectedTripId)
+            deleteItinerary(
+              { id, tripId: selectedTripId },
+              {
+                onSuccess: () => {
+                  Alert.alert("성공", "일정이 삭제되었습니다.");
+                },
+                onError: (e) => Alert.alert("오류", e.message),
+              },
+            );
         },
       },
     ]);
@@ -169,7 +178,7 @@ export default function ItineraryScreen() {
         onOpenEditModal: handleOpenEditModal,
         onDeleteItinerary: handleDeleteItinerary,
         onDragEnd: handleDragEnd,
-        onCloseAddModal: () => setIsAddModalVisible,
+        onCloseAddModal: () => setIsAddModalVisible(false),
       }}
       panGesture={panGesture}
     />
