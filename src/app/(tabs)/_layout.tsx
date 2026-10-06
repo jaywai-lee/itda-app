@@ -8,7 +8,7 @@ export default function TabLayout() {
   const { session, loading } = useAuth();
 
   const handleOpenSettings = () => {
-    router.push("/settings" as any);
+    router.push("/settings");
   };
 
   if (loading) {
@@ -20,7 +20,7 @@ export default function TabLayout() {
   }
 
   if (!session) {
-    return <Redirect href={"/login" as any} />;
+    return <Redirect href={"/login"} />;
   }
   return (
     <Tabs
@@ -50,7 +50,10 @@ export default function TabLayout() {
           title: "가계부",
           headerTitle: "여행 가계부",
           tabBarIcon: ({ color }) => (
-            <Wallet size={22} color={color as string} />
+            <Wallet
+              size={22}
+              color={typeof color === "string" ? color : COLORS.slate.inactive}
+            />
           ),
         }}
       />
@@ -60,7 +63,10 @@ export default function TabLayout() {
           title: "일정",
           headerTitle: "여행 일정",
           tabBarIcon: ({ color }) => (
-            <Calendar size={22} color={color as string} />
+            <Calendar
+              size={22}
+              color={typeof color === "string" ? color : COLORS.slate.inactive}
+            />
           ),
         }}
       />
@@ -69,7 +75,12 @@ export default function TabLayout() {
         options={{
           title: "마이페이지",
           headerTitle: "내 정보",
-          tabBarIcon: ({ color }) => <User size={22} color={color as string} />,
+          tabBarIcon: ({ color }) => (
+            <User
+              size={22}
+              color={typeof color === "string" ? color : COLORS.slate.inactive}
+            />
+          ),
         }}
       />
     </Tabs>

@@ -1,4 +1,6 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -17,7 +19,7 @@ export interface AddPlaceFormHandlers {
   onPlaceSelect: (name: string, lat: number, lng: number) => void;
   onChangeMemo: (text: string) => void;
   onToggleDatePicker: (isOpen: boolean) => void;
-  onChangeDate: (event: any, date?: Date) => void;
+  onChangeDate: (event: DateTimePickerChangeEvent, date: Date) => void;
   onSubmit: () => void;
 }
 
@@ -36,7 +38,7 @@ export const AddPlaceModalView = ({
   formState,
   handlers,
   isPending = false,
-  isEditMode,
+  isEditMode = false,
 }: AddPlaceModalViewProps) => {
   return (
     <Modal visible={visible} onClose={onClose}>

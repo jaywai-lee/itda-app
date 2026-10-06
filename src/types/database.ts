@@ -13,12 +13,12 @@ export interface Itinerary {
   id: string;
   trip_id: string;
   title: string;
-  place_name?: string | null;
-  lat?: number | null;
-  lng?: number | null;
+  place_name: string | null;
+  lat: number | null;
+  lng: number | null;
   visit_date: string;
   visit_time?: string | null;
-  memo?: string | null;
+  memo: string | null;
   order_index: number;
   created_at: string;
 }

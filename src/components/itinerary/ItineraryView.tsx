@@ -82,10 +82,7 @@ export const ItineraryView = ({
   ) {
     return (
       <View className="flex-1 justify-center items-center bg-slate-bg">
-        <ActivityIndicator
-          size="large"
-          color={COLORS.primary.DEFAULT as string}
-        />
+        <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </View>
     );
   }
@@ -146,7 +143,7 @@ export const ItineraryView = ({
             {state.isItinerariesLoading ? (
               <ActivityIndicator
                 size="small"
-                color={COLORS.primary.DEFAULT as string}
+                color={COLORS.primary.DEFAULT}
                 className="mt-4"
               />
             ) : state.localItineraries.length === 0 ? (

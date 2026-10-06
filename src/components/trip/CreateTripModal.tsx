@@ -2,6 +2,7 @@ import { COUNTRIES } from "@/constants/countries";
 import { useCreateTrip } from "@/hooks/trip/useCreateTrip";
 import { useUpdateTrip } from "@/hooks/trip/useUpdateTrip";
 import { Trip } from "@/types/database";
+import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
@@ -60,23 +61,25 @@ export const CreateTripModal = ({
     }
   }, [visible, editTarget]);
 
-  const handleSelectDate = (event: any, selectedDate?: Date) => {
+  const handleSelectDate = (
+    event: DateTimePickerChangeEvent,
+    selectedDate: Date,
+  ) => {
     if (Platform.OS === "android") {
       setPickerType(null);
     }
-    if (selectedDate) {
-      if (pickerType === "start") {
-        setStartDate(selectedDate);
-        if (selectedDate > endDate) {
-          setEndDate(selectedDate);
-        }
-      } else if (pickerType === "end") {
-        if (selectedDate < startDate) {
-          Alert.alert("알림", "종료일은 시작일보다 이전일 수 없습니다.");
-          return;
-        }
+
+    if (pickerType === "start") {
+      setStartDate(selectedDate);
+      if (selectedDate > endDate) {
         setEndDate(selectedDate);
       }
+    } else if (pickerType === "end") {
+      if (selectedDate < startDate) {
+        Alert.alert("알림", "종료일은 시작일보다 이전일 수 없습니다.");
+        return;
+      }
+      setEndDate(selectedDate);
     }
   };
 
@@ -111,7 +114,7 @@ export const CreateTripModal = ({
             Alert.alert("성공", "여행 정보가 수정되었습니다.");
             onClose();
           },
-          onError: (e) =>
+          onError: (e: Error) =>
             Alert.alert("오류", e.message || "여행 수정에 실패했습니다."),
         },
       );
@@ -121,7 +124,7 @@ export const CreateTripModal = ({
           Alert.alert("성공", "새로운 여행이 등록되었습니다.");
           onClose();
         },
-        onError: (e) =>
+        onError: (e: Error) =>
           Alert.alert("오류", e.message || "여행 등록에 실패했습니다."),
       });
     }

@@ -1,6 +1,8 @@
 import { COLORS } from "@/constants/colors";
 import { COUNTRIES } from "@/constants/countries";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ChevronDown } from "lucide-react-native";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
@@ -21,7 +23,7 @@ export interface CreateTripFormHandlers {
   onChangeName: (text: string) => void;
   onChangeTotalBudget: (text: string) => void;
   onOpenPicker: (type: "start" | "end" | null) => void;
-  onSelectDate: (event: any, date?: Date) => void;
+  onSelectDate: (event: DateTimePickerChangeEvent, date: Date) => void;
   onDismissPicker: () => void;
   onSelectCountry: (label: string, currency: string) => void;
   onToggleCountryPicker: () => void;
