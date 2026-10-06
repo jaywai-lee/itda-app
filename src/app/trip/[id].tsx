@@ -1,26 +1,16 @@
-import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
-import { CategoryProgressBar } from "@/components/account-book/CategoryProgressBar";
-import { CreateExpenseModal } from "@/components/expense/CreateExpenseModal";
-import { COLORS } from "@/constants/colors";
+import { TripDetailView } from "@/components/trip/TripDetailView";
 import { useExpenses } from "@/hooks/expense/useExpenses";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Expense } from "@/types/database";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft, Plus } from "lucide-react-native";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 
 export default function TripDetailScreen() {
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const { data: trips } = useTrips();
   const trip = trips?.find((t) => t.id === id);
@@ -41,106 +31,21 @@ export default function TripDetailScreen() {
   };
 
   return (
-    <View className="flex-1 bg-slate-bg">
-      <View className="flex-row items-center justify-between px-4 pt-14 pb-4 bg-white border-b border-slate-border shadow-sm z-10">
-        <Pressable
-          onPress={() => router.back()}
-          className="p-2 -ml-2 active:opacity-70"
-        >
-          <ChevronLeft size={28} color={COLORS.slate.text} />
-        </Pressable>
-        <Text className="text-lg font-bold text-slate-text">{trip.name}</Text>
-        <View className="w-10" />
-      </View>
-
-      <View className="p-4 flex-1">
-        <View className="bg-white rounded-2xl p-4 mb-5 border border-slate-border shadow-sm">
-          <BudgetProgressBar
-            totalBudget={trip.total_budget}
-            totalSpent={totalSpent}
-            currency={trip.currency}
-          />
-
-          {expenses && expenses.length > 0 && (
-            <View className="mt-4 pt-4 border-t border-slate-bg">
-              <CategoryProgressBar
-                expenses={expenses}
-                currency={trip.currency}
-              />
-            </View>
-          )}
-        </View>
-
-        <View className="flex-row justify-between items-center mb-3">
-          <Text className="text-lg font-bold text-slate-text">지출 내역</Text>
-          <Pressable
-            onPress={handleOpenCreateModal}
-            className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
-          >
-            <Plus size={16} color="#FFFFFF" />
-            <Text className="text-white font-semibold ml-1 text-xs">
-              지출 추가
-            </Text>
-          </Pressable>
-        </View>
-
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color={COLORS.primary.DEFAULT}
-            className="mt-10"
-          />
-        ) : expenses?.length === 0 ? (
-          <View className="py-10 items-center">
-            <Text className="text-slate-inactive">
-              아직 등록된 지출이 없습니다.
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            data={expenses}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Pressable
-                onPress={() => handleOpenEditModal(item)}
-                className="bg-white p-4 rounded-xl border border-slate-border mb-3 flex-row justify-between items-center active:opacity-75"
-              >
-                <View>
-                  <Text className="text-sm font-bold text-slate-text mb-1">
-                    {item.categories?.name || "기타"}
-                  </Text>
-                  {item.memo && (
-                    <Text className="text-xs text-slate-inactive">
-                      {item.memo}
-                    </Text>
-                  )}
-                </View>
-
-                <View className="items-end">
-                  <Text className="text-base font-bold text-slate-text">
-                    {item.amount.toLocaleString()} {item.currency}
-                  </Text>
-                  {item.currency !== "KRW" && item.amount_krw != null && (
-                    <Text className="text-xs text-slate-inactive mt-0.5">
-                      = {item.amount_krw.toLocaleString()} KRW
-                    </Text>
-                  )}
-                </View>
-              </Pressable>
-            )}
-          />
-        )}
-      </View>
-
-      <CreateExpenseModal
-        tripId={trip.id}
-        currency={trip.currency}
-        totalBudget={trip.total_budget}
-        currentTotalSpent={totalSpent}
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        editTarget={selectedExpense}
-      />
-    </View>
+    <TripDetailView
+      state={{
+        trip,
+        expenses,
+        isLoading,
+        totalSpent,
+        isModalVisible,
+        selectedExpense,
+      }}
+      handlers={{
+        onGoBack: () => router.back(),
+        onOpenCreateModal: handleOpenCreateModal,
+        onOpenEditModal: handleOpenEditModal,
+        onCloseModal: () => setIsModalVisible(false),
+      }}
+    />
   );
 }

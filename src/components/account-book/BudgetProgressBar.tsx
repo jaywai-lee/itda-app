@@ -25,7 +25,7 @@ export const BudgetProgressBar = ({
   }
 
   return (
-    <View className="w-full mt-3 border-t border-slate-border pt-3">
+    <View className="w-full pt-3">
       <View className="flex-row justify-between mb-2">
         <View>
           <Text className="text-xs text-slate-inactive mb-0.5">사용 금액</Text>

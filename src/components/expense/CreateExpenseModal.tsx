@@ -97,7 +97,7 @@ export const CreateExpenseModal = ({
       : currentTotalSpent;
     const nextTotalSpent = effectiveCurrentSpent + numericAmount;
 
-    if (totalBudget > 0 && nextTotalSpent > totalBudget) {
+    if (nextTotalSpent > totalBudget) {
       const isConfirmed = await new Promise((resolve) => {
         Alert.alert(
           "⚠️ 예산 초과 경고",
