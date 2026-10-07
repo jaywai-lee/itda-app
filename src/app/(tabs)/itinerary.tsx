@@ -1,4 +1,5 @@
 import { ItineraryView } from "@/components/itinerary/ItineraryView";
+import { useExpenses } from "@/hooks/expense/useExpenses";
 import { useDeleteItinerary } from "@/hooks/itinerary/useDeleteItinerary";
 import { useItineraries } from "@/hooks/itinerary/useItineraries";
 import { useUpdateItineraryOrder } from "@/hooks/itinerary/useUpdateItineraryOrder";
@@ -17,13 +18,18 @@ import {
 } from "react-native-reanimated";
 
 export default function ItineraryScreen() {
-  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  const [selectedTripId, setSelectedTripId] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [editTarget, setEditTarget] = useState<Itinerary | null>(null);
   const [localItineraries, setLocalItineraries] = useState<Itinerary[]>([]);
   const [isMeasured, setIsMeasured] = useState<boolean>(false);
+  const [isExpenseModalVisible, setIsExpenseModalVisible] =
+    useState<boolean>(false);
+  const [selectedItineraryIdForExpense, setSelectedItineraryIdForExpense] =
+    useState<string | null>(null);
 
+  const { data: expenses } = useExpenses(selectedTripId);
   const { data: trips, isLoading: isTripsLoading } = useTrips();
   const { data: itineraries, isLoading: isItinerariesLoading } = useItineraries(
     selectedTripId || "",
@@ -32,6 +38,10 @@ export default function ItineraryScreen() {
   const { mutate: updateOrder } = useUpdateItineraryOrder();
 
   const activeTrip = trips?.find((t) => t.id === selectedTripId);
+  const activeTripCurrency = activeTrip?.currency || "KRW";
+  const currentTotalSpent =
+    expenses?.reduce((acc, cur) => acc + cur.amount, 0) || 0;
+  const totalBudget = activeTrip?.total_budget || 0;
 
   const tripDays = useMemo(() => {
     if (!activeTrip) return [];
@@ -185,6 +195,16 @@ export default function ItineraryScreen() {
     }
   };
 
+  const handleOpenExpenseModal = (id: string) => {
+    setSelectedItineraryIdForExpense(id);
+    setIsExpenseModalVisible(true);
+  };
+
+  const handleCloseExpenseModal = () => {
+    setIsExpenseModalVisible(false);
+    setSelectedItineraryIdForExpense(null);
+  };
+
   return (
     <ItineraryView
       state={{
@@ -199,6 +219,11 @@ export default function ItineraryScreen() {
         editTarget,
         isMeasured,
         sheetStyle,
+        activeTripCurrency,
+        isExpenseModalVisible,
+        selectedItineraryIdForExpense,
+        totalBudget,
+        currentTotalSpent,
       }}
       handlers={{
         onSelectTrip: handleSelectTrip,
@@ -210,6 +235,8 @@ export default function ItineraryScreen() {
         onDeleteItinerary: handleDeleteItinerary,
         onDragEnd: handleDragEnd,
         onCloseAddModal: () => setIsAddModalVisible(false),
+        onOpenExpenseModal: handleOpenExpenseModal,
+        onCloseExpenseModal: handleCloseExpenseModal,
       }}
       panGesture={panGesture}
     />

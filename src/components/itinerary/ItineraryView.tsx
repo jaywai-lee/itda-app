@@ -18,6 +18,7 @@ import DraggableFlatList, {
 import type { PanGesture } from "react-native-gesture-handler";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { CreateExpenseModal } from "../expense/CreateExpenseModal";
 import { AddPlaceModal } from "./AddPlaceModal";
 import { DaySelector } from "./DaySelector";
 import { ItineraryListItem } from "./ItineraryListItem";
@@ -36,6 +37,11 @@ export interface ItineraryViewState {
   editTarget: Itinerary | null;
   isMeasured: boolean;
   sheetStyle: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>;
+  activeTripCurrency: string;
+  isExpenseModalVisible: boolean;
+  selectedItineraryIdForExpense: string | null;
+  totalBudget: number;
+  currentTotalSpent: number;
 }
 
 export interface ItineraryViewHandlers {
@@ -48,6 +54,8 @@ export interface ItineraryViewHandlers {
   onDeleteItinerary: (id: string) => void;
   onDragEnd: (params: { data: Itinerary[] }) => void;
   onCloseAddModal: () => void;
+  onOpenExpenseModal: (id: string) => void;
+  onCloseExpenseModal: () => void;
 }
 
 interface ItineraryViewProps {
@@ -75,6 +83,7 @@ export const ItineraryView = ({
           drag={drag}
           onEdit={handlers.onOpenEditModal}
           onDelete={handlers.onDeleteItinerary}
+          onAddExpense={handlers.onOpenExpenseModal}
         />
       );
     },
@@ -188,6 +197,16 @@ export const ItineraryView = ({
         tripId={state.selectedTripId || ""}
         selectedDate={state.selectedDate}
         editTarget={state.editTarget}
+      />
+
+      <CreateExpenseModal
+        tripId={state.selectedTripId || ""}
+        currency={state.activeTripCurrency}
+        visible={state.isExpenseModalVisible}
+        onClose={handlers.onCloseExpenseModal}
+        itineraryId={state.selectedItineraryIdForExpense}
+        totalBudget={state.totalBudget}
+        currentTotalSpent={state.currentTotalSpent}
       />
     </View>
   );

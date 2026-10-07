@@ -17,6 +17,7 @@ interface CreateExpenseModalProps {
   visible: boolean;
   onClose: () => void;
   editTarget?: Expense | null;
+  itineraryId?: string | null;
 }
 
 export const CreateExpenseModal = ({
@@ -27,11 +28,15 @@ export const CreateExpenseModal = ({
   visible,
   onClose,
   editTarget,
+  itineraryId,
 }: CreateExpenseModalProps) => {
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [memo, setMemo] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [linkedItineraryId, setLinkedItineraryId] = useState<string | null>(
+    null,
+  );
   const [isCalculating, setIsCalculating] = useState(false);
 
   const { data: categories = [], isLoading: isLoadingCategories } =
@@ -47,14 +52,16 @@ export const CreateExpenseModal = ({
         setCategoryId(editTarget.category_id || null);
         setMemo(editTarget.memo || "");
         setPhotoUrl(editTarget.photo_url || "");
+        setLinkedItineraryId(editTarget.itinerary_id ?? null);
       } else {
         setAmount("");
         setCategoryId(categories.length > 0 ? categories[0].id : null);
         setMemo("");
         setPhotoUrl("");
+        setLinkedItineraryId(itineraryId ?? null);
       }
     }
-  }, [visible, editTarget, categories]);
+  }, [visible, editTarget, categories, itineraryId]);
 
   const handlePickImage = async () => {
     const permissionResult =
@@ -130,6 +137,7 @@ export const CreateExpenseModal = ({
         category_id: categoryId,
         memo,
         photo_url: photoUrl,
+        itinerary_id: linkedItineraryId,
       };
 
       if (editTarget) {
