@@ -11,6 +11,7 @@ interface AddPlaceModalProps {
   visible: boolean;
   onClose: () => void;
   tripId: string;
+  selectedDate: string | null;
   editTarget?: Itinerary | null;
 }
 
@@ -18,6 +19,7 @@ export const AddPlaceModal = ({
   visible,
   onClose,
   tripId,
+  selectedDate,
   editTarget,
 }: AddPlaceModalProps) => {
   const [placeName, setPlaceName] = useState("");
@@ -46,12 +48,12 @@ export const AddPlaceModal = ({
         setPlaceName("");
         setLat(null);
         setLng(null);
-        setVisitDate(new Date());
+        setVisitDate(selectedDate ? parseISO(selectedDate) : new Date());
         setMemo("");
       }
       setIsDatePickerOpen(false);
     }
-  }, [visible, editTarget]);
+  }, [visible, editTarget, selectedDate]);
 
   const handlePlaceSelect = (
     name: string,
@@ -64,9 +66,12 @@ export const AddPlaceModal = ({
   };
 
   const handleChangeDate = (event: DateTimePickerChangeEvent, date: Date) => {
-    setVisitDate(date);
-
+    if (date) setVisitDate(date);
     if (Platform.OS === "android") setIsDatePickerOpen(false);
+  };
+
+  const handleDismissDatePicker = () => {
+    setIsDatePickerOpen(false);
   };
 
   const handleSubmit = () => {
@@ -120,6 +125,7 @@ export const AddPlaceModal = ({
         onChangeMemo: setMemo,
         onToggleDatePicker: setIsDatePickerOpen,
         onChangeDate: handleChangeDate,
+        onDismissDatePicker: handleDismissDatePicker,
         onSubmit: handleSubmit,
       }}
       isPending={isCreating || isUpdating}
