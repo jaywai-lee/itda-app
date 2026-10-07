@@ -1,7 +1,13 @@
 import { COLORS } from "@/constants/colors";
 import { Itinerary } from "@/types/database";
 import { cn } from "@/utils/cn";
-import { GripVertical, MapPin, Pencil, Trash2 } from "lucide-react-native";
+import {
+  GripVertical,
+  MapPin,
+  Pencil,
+  Trash2,
+  Wallet,
+} from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 import { ScaleDecorator } from "react-native-draggable-flatlist";
 
@@ -13,6 +19,7 @@ interface ItineraryListItemProps {
   drag: () => void;
   onEdit: (item: Itinerary) => void;
   onDelete: (id: string) => void;
+  onAddExpense: (itineraryId: string) => void;
 }
 
 export const ItineraryListItem = ({
@@ -23,6 +30,7 @@ export const ItineraryListItem = ({
   drag,
   onEdit,
   onDelete,
+  onAddExpense,
 }: ItineraryListItemProps) => {
   return (
     <ScaleDecorator>
@@ -69,7 +77,13 @@ export const ItineraryListItem = ({
             )}
           </View>
 
-          <View className="flex-row gap-3">
+          <View className="flex-row gap-2">
+            <Pressable
+              onPress={() => onAddExpense(item.id)}
+              className="p-1 active:opacity-60"
+            >
+              <Wallet size={18} color={COLORS.primary.DEFAULT} />
+            </Pressable>
             <Pressable
               onPress={() => onEdit(item)}
               className="p-1 active:opacity-60"
