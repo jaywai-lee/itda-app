@@ -1,5 +1,6 @@
 import { COLORS } from "@/constants/colors";
 import { Itinerary, Trip } from "@/types/database";
+import { TripDay } from "@/utils/dateUtils";
 import { Plus } from "lucide-react-native";
 import { useCallback } from "react";
 import {
@@ -18,6 +19,7 @@ import type { PanGesture } from "react-native-gesture-handler";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { AddPlaceModal } from "./AddPlaceModal";
+import { DaySelector } from "./DaySelector";
 import { ItineraryListItem } from "./ItineraryListItem";
 import { ItineraryMapView } from "./ItineraryMapView";
 import { TripSelector } from "./TripSelector";
@@ -25,6 +27,8 @@ import { TripSelector } from "./TripSelector";
 export interface ItineraryViewState {
   trips: Trip[] | undefined;
   selectedTripId: string | null;
+  tripDays: TripDay[];
+  selectedDate: string | null;
   localItineraries: Itinerary[];
   isTripsLoading: boolean;
   isItinerariesLoading: boolean;
@@ -36,6 +40,7 @@ export interface ItineraryViewState {
 
 export interface ItineraryViewHandlers {
   onSelectTrip: (id: string) => void;
+  onSelectDate: (date: string) => void;
   onContainerLayout: (e: LayoutChangeEvent) => void;
   onHandleLayout: (e: LayoutChangeEvent) => void;
   onOpenCreateModal: () => void;
@@ -108,6 +113,12 @@ export const ItineraryView = ({
         onSelectTrip={handlers.onSelectTrip}
       />
 
+      <DaySelector
+        days={state.tripDays}
+        selectedDate={state.selectedDate}
+        onSelectDate={handlers.onSelectDate}
+      />
+
       <View className="flex-1 relative" onLayout={handlers.onContainerLayout}>
         <ItineraryMapView itineraries={state.localItineraries} />
 
@@ -175,6 +186,7 @@ export const ItineraryView = ({
         visible={state.isAddModalVisible}
         onClose={handlers.onCloseAddModal}
         tripId={state.selectedTripId || ""}
+        selectedDate={state.selectedDate}
         editTarget={state.editTarget}
       />
     </View>

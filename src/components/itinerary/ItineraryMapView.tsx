@@ -1,7 +1,6 @@
-import { COLORS } from "@/constants/colors";
 import { Itinerary } from "@/types/database";
 import { useEffect, useRef } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 interface ItineraryMapViewProps {
@@ -64,7 +63,7 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
         style={{ width: "100%", height: "100%" }}
         initialRegion={initialRegion}
       >
-        {validItineraries?.map((item) => (
+        {validItineraries?.map((item, index) => (
           <Marker
             key={item.id}
             coordinate={{
@@ -73,8 +72,16 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
             }}
             title={item.place_name || "이름 없는 장소"}
             description={item.memo || ""}
-            pinColor={COLORS.primary.DEFAULT}
-          />
+          >
+            <View className="items-center justify-center">
+              <View className="bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white shadow-md">
+                <Text className="text-white font-bold text-xs">
+                  {index + 1}
+                </Text>
+              </View>
+              <View className="w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-primary -mt-[1px]" />
+            </View>
+          </Marker>
         ))}
       </MapView>
     </View>

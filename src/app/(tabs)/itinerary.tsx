@@ -4,6 +4,7 @@ import { useItineraries } from "@/hooks/itinerary/useItineraries";
 import { useUpdateItineraryOrder } from "@/hooks/itinerary/useUpdateItineraryOrder";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Itinerary } from "@/types/database";
+import { getTripDays } from "@/utils/dateUtils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, LayoutChangeEvent } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
@@ -17,6 +18,7 @@ import {
 
 export default function ItineraryScreen() {
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [editTarget, setEditTarget] = useState<Itinerary | null>(null);
   const [localItineraries, setLocalItineraries] = useState<Itinerary[]>([]);
@@ -29,22 +31,41 @@ export default function ItineraryScreen() {
   const { mutate: deleteItinerary } = useDeleteItinerary();
   const { mutate: updateOrder } = useUpdateItineraryOrder();
 
-  useEffect(() => {
-    if (itineraries) {
-      setLocalItineraries(itineraries);
-    }
-  }, [itineraries]);
+  const activeTrip = trips?.find((t) => t.id === selectedTripId);
+
+  const tripDays = useMemo(() => {
+    if (!activeTrip) return [];
+    return getTripDays(activeTrip.start_date, activeTrip.end_date);
+  }, [activeTrip]);
 
   useEffect(() => {
     if (trips && trips.length > 0 && !selectedTripId) {
       setSelectedTripId(trips[0].id);
     }
-  }, [trips]);
+  }, [trips, selectedTripId]);
+
+  useEffect(() => {
+    if (tripDays.length > 0 && !selectedDate) {
+      setSelectedDate(tripDays[0].dateString);
+    }
+  }, [tripDays, selectedDate]);
+
+  useEffect(() => {
+    if (itineraries && selectedDate) {
+      const filtered = itineraries.filter(
+        (item) => item.visit_date === selectedDate,
+      );
+      setLocalItineraries(
+        filtered.sort((a, b) => a.order_index - b.order_index),
+      );
+    } else {
+      setLocalItineraries([]);
+    }
+  }, [itineraries, selectedDate]);
 
   const containerHeight = useSharedValue<number>(0);
   const handleHeight = useSharedValue<number>(36);
   const hasInitialized = useRef<boolean>(false);
-
   const translateY = useSharedValue<number>(0);
   const startY = useSharedValue<number>(0);
 
@@ -104,7 +125,7 @@ export default function ItineraryScreen() {
             easing: Easing.out(Easing.cubic),
           });
         }),
-    [],
+    [collapsedY, defaultY, translateY, startY],
   );
 
   const sheetStyle = useAnimatedStyle(() => ({
@@ -157,11 +178,20 @@ export default function ItineraryScreen() {
     updateOrder({ tripId: selectedTripId, updates });
   };
 
+  const handleSelectTrip = (id: string) => {
+    if (id !== selectedTripId) {
+      setSelectedDate(null);
+      setSelectedTripId(id);
+    }
+  };
+
   return (
     <ItineraryView
       state={{
         trips,
         selectedTripId,
+        tripDays,
+        selectedDate,
         localItineraries,
         isTripsLoading,
         isItinerariesLoading,
@@ -171,7 +201,8 @@ export default function ItineraryScreen() {
         sheetStyle,
       }}
       handlers={{
-        onSelectTrip: setSelectedTripId,
+        onSelectTrip: handleSelectTrip,
+        onSelectDate: setSelectedDate,
         onContainerLayout,
         onHandleLayout,
         onOpenCreateModal: handleOpenCreateModal,

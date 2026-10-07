@@ -20,6 +20,7 @@ export interface AddPlaceFormHandlers {
   onChangeMemo: (text: string) => void;
   onToggleDatePicker: (isOpen: boolean) => void;
   onChangeDate: (event: DateTimePickerChangeEvent, date: Date) => void;
+  onDismissDatePicker: () => void;
   onSubmit: () => void;
 }
 
@@ -135,7 +136,7 @@ export const AddPlaceModalView = ({
               mode="date"
               display={Platform.OS === "ios" ? "inline" : "default"}
               onValueChange={handlers.onChangeDate}
-              onDismiss={() => handlers.onToggleDatePicker(false)}
+              onDismiss={handlers.onDismissDatePicker}
             />
           </View>
         )}
