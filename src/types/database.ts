@@ -11,4 +11,9 @@ export type Expense = Database["public"]["Tables"]["expenses"]["Row"] & {
     color: string | null;
     icon: string | null;
   } | null;
+  itineraries?: {
+    id: string;
+    place_name: string | null;
+    title: string;
+  } | null;
 };

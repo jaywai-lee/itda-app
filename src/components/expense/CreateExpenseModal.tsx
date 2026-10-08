@@ -4,9 +4,11 @@ import { useDeleteExpense } from "@/hooks/expense/useDeleteExpense";
 import { useUpdateExpense } from "@/hooks/expense/useUpdateExpense";
 import { Expense } from "@/types/database";
 import { fetchExchangeRate } from "@/utils/currency";
+import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
+import { parseISO } from "date-fns";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { CreateExpenseModalView } from "./CreateExpenseModalView";
 
 interface CreateExpenseModalProps {
@@ -18,6 +20,7 @@ interface CreateExpenseModalProps {
   onClose: () => void;
   editTarget?: Expense | null;
   itineraryId?: string | null;
+  itineraryVisitDate?: string | null;
 }
 
 export const CreateExpenseModal = ({
@@ -29,6 +32,7 @@ export const CreateExpenseModal = ({
   onClose,
   editTarget,
   itineraryId,
+  itineraryVisitDate,
 }: CreateExpenseModalProps) => {
   const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -37,6 +41,8 @@ export const CreateExpenseModal = ({
   const [linkedItineraryId, setLinkedItineraryId] = useState<string | null>(
     null,
   );
+  const [spentDate, setSpentDate] = useState(new Date());
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const { data: categories = [], isLoading: isLoadingCategories } =
@@ -53,15 +59,20 @@ export const CreateExpenseModal = ({
         setMemo(editTarget.memo || "");
         setPhotoUrl(editTarget.photo_url || "");
         setLinkedItineraryId(editTarget.itinerary_id ?? null);
+        setSpentDate(parseISO(editTarget.spent_at));
       } else {
         setAmount("");
         setCategoryId(categories.length > 0 ? categories[0].id : null);
         setMemo("");
         setPhotoUrl("");
         setLinkedItineraryId(itineraryId ?? null);
+        setSpentDate(
+          itineraryVisitDate ? parseISO(itineraryVisitDate) : new Date(),
+        );
       }
+      setIsDatePickerOpen(false);
     }
-  }, [visible, editTarget, categories, itineraryId]);
+  }, [visible, editTarget, categories, itineraryId, itineraryVisitDate]);
 
   const handlePickImage = async () => {
     const permissionResult =
@@ -89,6 +100,14 @@ export const CreateExpenseModal = ({
 
   const handleRemoveImage = () => {
     setPhotoUrl("");
+  };
+
+  const handleChangeSpentDate = (
+    event: DateTimePickerChangeEvent,
+    date: Date,
+  ) => {
+    setSpentDate(date);
+    if (Platform.OS === "android") setIsDatePickerOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -128,6 +147,8 @@ export const CreateExpenseModal = ({
 
       const rate = await fetchExchangeRate(currency);
       const amountKrw = Math.round(Number(amount) * rate);
+      const normalizedSpentAt = new Date(spentDate);
+      normalizedSpentAt.setHours(12, 0, 0, 0);
 
       const expenseData = {
         trip_id: tripId,
@@ -138,6 +159,7 @@ export const CreateExpenseModal = ({
         memo,
         photo_url: photoUrl,
         itinerary_id: linkedItineraryId,
+        spent_at: normalizedSpentAt.toISOString(),
       };
 
       if (editTarget) {
@@ -152,16 +174,13 @@ export const CreateExpenseModal = ({
           },
         );
       } else {
-        createExpense(
-          { ...expenseData, spent_at: new Date().toISOString() },
-          {
-            onSuccess: () => {
-              Alert.alert("성공", "지출 내역이 등록되었습니다.");
-              onClose();
-            },
-            onError: (e) => Alert.alert("오류", e.message),
+        createExpense(expenseData, {
+          onSuccess: () => {
+            Alert.alert("성공", "지출 내역이 등록되었습니다.");
+            onClose();
           },
-        );
+          onError: (e) => Alert.alert("오류", e.message),
+        });
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -197,13 +216,22 @@ export const CreateExpenseModal = ({
       visible={visible}
       onClose={onClose}
       currency={currency}
-      formState={{ amount, categoryId, memo, photoUrl }}
+      formState={{
+        amount,
+        categoryId,
+        memo,
+        photoUrl,
+        spentDate,
+        isDatePickerOpen,
+      }}
       handlers={{
         onChangeAmount: setAmount,
         onSelectCategory: setCategoryId,
         onChangeMemo: setMemo,
         onPickImage: handlePickImage,
         onRemoveImage: handleRemoveImage,
+        onToggleDatePicker: setIsDatePickerOpen,
+        onChangeSpentDate: handleChangeSpentDate,
         onSubmit: handleSubmit,
         onDelete: handleDelete,
       }}

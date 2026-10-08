@@ -17,6 +17,11 @@ export const useExpenses = (tripId: string) => {
             name,
             color,
             icon
+          ),
+          itineraries (
+            id,
+            place_name,
+            title
           )
         `,
         )

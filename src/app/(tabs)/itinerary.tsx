@@ -205,6 +205,10 @@ export default function ItineraryScreen() {
     setSelectedItineraryIdForExpense(null);
   };
 
+  const selectedItineraryForExpense = itineraries?.find(
+    (i) => i.id === selectedItineraryIdForExpense,
+  );
+
   return (
     <ItineraryView
       state={{
@@ -224,6 +228,8 @@ export default function ItineraryScreen() {
         selectedItineraryIdForExpense,
         totalBudget,
         currentTotalSpent,
+        expenses: expenses || [],
+        itineraryVisitDate: selectedItineraryForExpense?.visit_date ?? null,
       }}
       handlers={{
         onSelectTrip: handleSelectTrip,

@@ -20,6 +20,8 @@ interface ItineraryListItemProps {
   onEdit: (item: Itinerary) => void;
   onDelete: (id: string) => void;
   onAddExpense: (itineraryId: string) => void;
+  linkedExpensesSum: number;
+  currency?: string;
 }
 
 export const ItineraryListItem = ({
@@ -31,6 +33,8 @@ export const ItineraryListItem = ({
   onEdit,
   onDelete,
   onAddExpense,
+  linkedExpensesSum,
+  currency,
 }: ItineraryListItemProps) => {
   return (
     <ScaleDecorator>
@@ -74,6 +78,15 @@ export const ItineraryListItem = ({
               >
                 {item.memo}
               </Text>
+            )}
+
+            {linkedExpensesSum > 0 && (
+              <View className="flex-row items-center mt-2 ml-4 bg-slate-bg self-start px-2 py-1 rounded-md">
+                <Wallet size={12} color={COLORS.slate.inactive as string} />
+                <Text className="text-xs font-semibold text-slate-text ml-1">
+                  {linkedExpensesSum.toLocaleString()} {currency}
+                </Text>
+              </View>
             )}
           </View>
 
