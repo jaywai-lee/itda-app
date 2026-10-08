@@ -86,7 +86,11 @@ export const TripDetailView = ({ state, handlers }: TripDetailViewProps) => {
             data={state.expenses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <ExpenseListItem item={item} onPress={handlers.onOpenEditModal} />
+              <ExpenseListItem
+                item={item}
+                tripStartDate={state.trip.start_date}
+                onPress={handlers.onOpenEditModal}
+              />
             )}
           />
         )}

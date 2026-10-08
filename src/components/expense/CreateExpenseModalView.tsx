@@ -1,9 +1,14 @@
 import { COLORS } from "@/constants/colors";
 import { Category } from "@/types/database";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
+import { format } from "date-fns";
 import { ImageIcon, Trash2 } from "lucide-react-native";
 import {
   ActivityIndicator,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -17,6 +22,8 @@ export interface CreateExpenseFormState {
   categoryId: string | null;
   memo: string;
   photoUrl: string;
+  spentDate: Date;
+  isDatePickerOpen: boolean;
 }
 
 export interface CreateExpenseFormHandlers {
@@ -25,6 +32,8 @@ export interface CreateExpenseFormHandlers {
   onChangeMemo: (text: string) => void;
   onPickImage: () => void;
   onRemoveImage: () => void;
+  onToggleDatePicker: (isOpen: boolean) => void;
+  onChangeSpentDate: (event: DateTimePickerChangeEvent, date: Date) => void;
   onSubmit: () => void;
   onDelete: () => void;
 }
@@ -71,6 +80,18 @@ export const CreateExpenseModalView = ({
             onChangeText={handlers.onChangeAmount}
             className="border border-slate-border rounded-xl p-3 mb-4 text-slate-text font-bold text-lg"
           />
+
+          <Text className="text-sm font-semibold text-slate-text mb-1">
+            결제일
+          </Text>
+          <Pressable
+            onPress={() => handlers.onToggleDatePicker(true)}
+            className="border border-slate-border rounded-xl p-3 mb-4 bg-white active:bg-slate-bg"
+          >
+            <Text className="text-slate-text">
+              {format(formState.spentDate, "yyyy-MM-dd")}
+            </Text>
+          </Pressable>
 
           <Text className="text-sm font-semibold text-slate-text mb-2">
             카테고리
@@ -158,6 +179,29 @@ export const CreateExpenseModalView = ({
             multiline
           />
         </ScrollView>
+
+        {formState.isDatePickerOpen && (
+          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border border-slate-border rounded-3xl shadow-2xl z-50">
+            <View className="flex-row justify-between items-center mb-2 px-2">
+              <Text className="text-base font-bold text-slate-text">
+                📅 결제일 선택
+              </Text>
+              <Pressable
+                onPress={() => handlers.onToggleDatePicker(false)}
+                className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
+              >
+                <Text className="text-slate-text font-bold text-sm">확인</Text>
+              </Pressable>
+            </View>
+            <DateTimePicker
+              value={formState.spentDate}
+              mode="date"
+              display={Platform.OS === "ios" ? "inline" : "default"}
+              onValueChange={handlers.onChangeSpentDate}
+              onDismiss={() => handlers.onToggleDatePicker(false)}
+            />
+          </View>
+        )}
       </Modal.Body>
 
       <View className="flex-row gap-3">

@@ -1,5 +1,5 @@
 import { COLORS } from "@/constants/colors";
-import { Itinerary, Trip } from "@/types/database";
+import { Expense, Itinerary, Trip } from "@/types/database";
 import { TripDay } from "@/utils/dateUtils";
 import { Plus } from "lucide-react-native";
 import { useCallback } from "react";
@@ -42,6 +42,8 @@ export interface ItineraryViewState {
   selectedItineraryIdForExpense: string | null;
   totalBudget: number;
   currentTotalSpent: number;
+  expenses: Expense[];
+  itineraryVisitDate: string | null;
 }
 
 export interface ItineraryViewHandlers {
@@ -73,6 +75,9 @@ export const ItineraryView = ({
     ({ item, getIndex, drag, isActive }: RenderItemParams<Itinerary>) => {
       const index = getIndex() ?? 0;
       const isLast = index === state.localItineraries.length - 1;
+      const linkedSum = state.expenses
+        .filter((e) => e.itinerary_id === item.id)
+        .reduce((acc, cur) => acc + cur.amount, 0);
 
       return (
         <ItineraryListItem
@@ -84,10 +89,12 @@ export const ItineraryView = ({
           onEdit={handlers.onOpenEditModal}
           onDelete={handlers.onDeleteItinerary}
           onAddExpense={handlers.onOpenExpenseModal}
+          linkedExpensesSum={linkedSum}
+          currency={state.activeTripCurrency}
         />
       );
     },
-    [state.localItineraries.length, handlers],
+    [state.localItineraries.length, state.expenses, handlers],
   );
 
   if (
@@ -205,6 +212,7 @@ export const ItineraryView = ({
         visible={state.isExpenseModalVisible}
         onClose={handlers.onCloseExpenseModal}
         itineraryId={state.selectedItineraryIdForExpense}
+        itineraryVisitDate={state.itineraryVisitDate}
         totalBudget={state.totalBudget}
         currentTotalSpent={state.currentTotalSpent}
       />
