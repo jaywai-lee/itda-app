@@ -1,11 +1,13 @@
 import { COLORS } from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
 import { router } from "expo-router";
-import { ChevronRight, LogOut } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, LogOut } from "lucide-react-native";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const handleLogout = () => {
     Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
@@ -22,7 +24,18 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View className="flex-1 mt-10 bg-slate-bg">
+    <View className="flex-1 bg-slate-bg" style={{ paddingTop: insets.top }}>
+      <View className="flex-row items-center justify-between px-4 pb-4 border-b border-slate-border bg-white">
+        <Pressable
+          onPress={() => router.back()}
+          className="p-2 -ml-2 active:opacity-70"
+        >
+          <ChevronLeft size={28} color={COLORS.slate?.text || "#1E293B"} />
+        </Pressable>
+        <Text className="text-lg font-bold text-slate-text">설정</Text>
+        <View className="w-10" />
+      </View>
+
       <ScrollView className="flex-1 pt-4">
         <View className="bg-white border-y border-slate-border mb-6">
           <Pressable className="flex-row justify-between items-center p-4 border-b border-slate-border active:bg-slate-50">
@@ -31,7 +44,7 @@ export default function SettingsScreen() {
             </Text>
             <ChevronRight
               size={20}
-              color={COLORS.slate.inactive || "#94a3b8"}
+              color={COLORS.slate?.inactive || "#94a3b8"}
             />
           </Pressable>
           <Pressable className="flex-row justify-between items-center p-4 border-b border-slate-border active:bg-slate-50">
@@ -40,7 +53,7 @@ export default function SettingsScreen() {
             </Text>
             <ChevronRight
               size={20}
-              color={COLORS.slate.inactive || "#94a3b8"}
+              color={COLORS.slate?.inactive || "#94a3b8"}
             />
           </Pressable>
           <Pressable className="flex-row justify-between items-center p-4 active:bg-slate-50">
@@ -49,7 +62,7 @@ export default function SettingsScreen() {
             </Text>
             <ChevronRight
               size={20}
-              color={COLORS.slate.inactive || "#94a3b8"}
+              color={COLORS.slate?.inactive || "#94a3b8"}
             />
           </Pressable>
         </View>

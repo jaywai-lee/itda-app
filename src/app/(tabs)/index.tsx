@@ -1,11 +1,10 @@
-import { BudgetProgressBar } from "@/components/account-book/BudgetProgressBar";
 import { CreateTripModal } from "@/components/trip/CreateTripModal";
+import { TripListItem } from "@/components/trip/TripListItem";
 import { COLORS } from "@/constants/colors";
 import { useDeleteTrip } from "@/hooks/trip/useDeleteTrip";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Trip } from "@/types/database";
-import { useRouter } from "expo-router";
-import { Calendar, Pencil, Plus, Trash2 } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -23,7 +22,6 @@ export default function AccountBookScreen() {
 
   const { data: trips, isLoading } = useTrips();
   const { mutate: deleteTrip } = useDeleteTrip();
-  const router = useRouter();
 
   const handleOpenCreateModal = () => {
     setSelectedTrip(null);
@@ -104,48 +102,11 @@ export default function AccountBookScreen() {
           data={trips}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: "/trip/[id]",
-                  params: { id: item.id },
-                })
-              }
-              className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm active:opacity-70"
-            >
-              <View className="flex-row justify-between items-start mb-1">
-                <Text className="text-lg font-bold text-slate-text flex-1">
-                  {item.name}
-                </Text>
-                <View className="flex-row items-center gap-2">
-                  <Pressable
-                    onPress={(e) => handleOpenEditModal(item, e)}
-                    className="p-1 active:opacity-70"
-                  >
-                    <Pencil size={18} color={COLORS.slate.inactive} />
-                  </Pressable>
-                  <Pressable
-                    onPress={(e) => handleDeleteTrip(item.id, e)}
-                    className="p-1 active:opacity-70"
-                  >
-                    <Trash2 size={18} color={COLORS.budget.danger} />
-                  </Pressable>
-                </View>
-              </View>
-
-              <View className="flex-row items-center mb-2">
-                <Calendar size={14} color={COLORS.slate.inactive} />
-                <Text className="text-xs text-slate-inactive ml-1">
-                  {item.start_date} ~ {item.end_date}
-                </Text>
-              </View>
-
-              <BudgetProgressBar
-                totalBudget={item.total_budget}
-                totalSpent={0}
-                currency={item.currency}
-              />
-            </Pressable>
+            <TripListItem
+              item={item}
+              onEdit={handleOpenEditModal}
+              onDelete={handleDeleteTrip}
+            />
           )}
         />
       )}
