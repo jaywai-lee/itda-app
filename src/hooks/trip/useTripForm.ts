@@ -14,6 +14,7 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
   const [totalBudget, setTotalBudget] = useState("");
   const [pickerType, setPickerType] = useState<"start" | "end" | null>(null);
   const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
+  const [customExchangeRate, setCustomExchangeRate] = useState<string>("");
 
   useEffect(() => {
     if (visible) {
@@ -31,6 +32,11 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
         );
         setCountry(matchedCountry ? matchedCountry.label : "직접 입력");
         setTotalBudget(editTarget.total_budget.toString());
+        setCustomExchangeRate(
+          editTarget.custom_exchange_rate
+            ? editTarget.custom_exchange_rate.toString()
+            : "",
+        );
       } else {
         setName("");
         setStartDate(new Date());
@@ -38,6 +44,7 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
         setCountry(COUNTRIES[0].label);
         setCurrency(COUNTRIES[0].currency);
         setTotalBudget("");
+        setCustomExchangeRate("");
       }
       setPickerType(null);
       setIsCountryPickerOpen(false);
@@ -85,8 +92,15 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
       totalBudget,
       pickerType,
       isCountryPickerOpen,
+      customExchangeRate,
     },
-    setters: { setName, setTotalBudget, setPickerType, setIsCountryPickerOpen },
+    setters: {
+      setName,
+      setTotalBudget,
+      setPickerType,
+      setIsCountryPickerOpen,
+      setCustomExchangeRate,
+    },
     handlers: { handleSelectDate, handleSelectCountry },
   };
 };

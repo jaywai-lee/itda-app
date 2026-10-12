@@ -17,6 +17,7 @@ export interface CreateTripFormState {
   pickerType: "start" | "end" | null;
   country: string;
   isCountryPickerOpen: boolean;
+  customExchangeRate: string;
 }
 
 export interface CreateTripFormHandlers {
@@ -27,6 +28,7 @@ export interface CreateTripFormHandlers {
   onDismissPicker: () => void;
   onSelectCountry: (label: string, currency: string) => void;
   onToggleCountryPicker: () => void;
+  onChangeCustomExchangeRate: (text: string) => void;
   onSubmit: () => void;
 }
 
@@ -78,6 +80,29 @@ export const CreateTripModalView = ({
               <ChevronDown size={18} color={COLORS.slate.inactive} />
             </View>
           </Pressable>
+
+          {formState.currency !== "KRW" && (
+            <View className="mb-4">
+              <Text className="text-sm font-semibold text-slate-text mb-1">
+                적용 환율 (선택)
+              </Text>
+              <View className="flex-row items-center">
+                <Text className="text-sm font-bold text-slate-text mr-3">
+                  1 {formState.currency} =
+                </Text>
+                <TextInput
+                  placeholder="미입력 시 실시간 환율 적용"
+                  value={formState.customExchangeRate}
+                  onChangeText={handlers.onChangeCustomExchangeRate}
+                  keyboardType="numeric"
+                  className="flex-1 border border-slate-border rounded-xl p-3 text-slate-text bg-white"
+                />
+                <Text className="text-sm font-bold text-slate-text ml-3">
+                  원 (KRW)
+                </Text>
+              </View>
+            </View>
+          )}
 
           {formState.isCountryPickerOpen && (
             <View className="absolute top-16 left-0 right-0 bg-white border border-slate-border rounded-xl shadow-lg z-50 overflow-hidden">
