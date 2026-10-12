@@ -5,6 +5,7 @@ import { CreateExpenseModalView } from "./CreateExpenseModalView";
 interface CreateExpenseModalProps {
   tripId: string;
   currency: string;
+  customExchangeRate?: number | null;
   totalBudget: number;
   currentTotalSpent: number;
   visible: boolean;

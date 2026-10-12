@@ -68,7 +68,7 @@ export const CreateExpenseModalView = ({
       <Modal.Body>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          className="max-h-[70vh]"
+          className="max-h-[65vh]"
         >
           <Text className="text-sm font-semibold text-slate-text mb-1">
             금액 ({currency})
@@ -204,7 +204,7 @@ export const CreateExpenseModalView = ({
         )}
       </Modal.Body>
 
-      <View className="flex-row gap-3">
+      <View className="flex-row gap-3 pt-2">
         {isEditMode && handlers.onDelete && (
           <Pressable
             onPress={handlers.onDelete}
