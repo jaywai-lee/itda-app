@@ -15,6 +15,7 @@ interface TripFormData {
   endDate: Date;
   currency: string;
   totalBudget: string;
+  customExchangeRate: string;
 }
 
 export const useTripSubmit = ({ editTarget, onClose }: SubmitOptions) => {
@@ -22,7 +23,14 @@ export const useTripSubmit = ({ editTarget, onClose }: SubmitOptions) => {
   const { mutate: updateTrip, isPending: isUpdating } = useUpdateTrip();
 
   const handleSubmit = (formData: TripFormData) => {
-    const { name, startDate, endDate, currency, totalBudget } = formData;
+    const {
+      name,
+      startDate,
+      endDate,
+      currency,
+      totalBudget,
+      customExchangeRate,
+    } = formData;
 
     if (!name || !startDate || !endDate) {
       Alert.alert("알림", "여행 이름과 기간을 입력해 주세요.");
@@ -35,6 +43,9 @@ export const useTripSubmit = ({ editTarget, onClose }: SubmitOptions) => {
       end_date: format(endDate, "yyyy-MM-dd"),
       currency,
       total_budget: Number(totalBudget) || 0,
+      custom_exchange_rate: customExchangeRate
+        ? Number(customExchangeRate)
+        : null,
     };
 
     if (editTarget) {

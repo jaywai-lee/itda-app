@@ -23,6 +23,7 @@ export const useCreateTripModal = ({
       endDate: form.state.endDate,
       currency: form.state.currency,
       totalBudget: form.state.totalBudget,
+      customExchangeRate: form.state.customExchangeRate,
     });
   };
 
@@ -31,6 +32,7 @@ export const useCreateTripModal = ({
     handlers: {
       onChangeName: form.setters.setName,
       onChangeTotalBudget: form.setters.setTotalBudget,
+      onChangeCustomExchangeRate: form.setters.setCustomExchangeRate,
       onOpenPicker: form.setters.setPickerType,
       onSelectDate: form.handlers.handleSelectDate,
       onDismissPicker: () => form.setters.setPickerType(null),
