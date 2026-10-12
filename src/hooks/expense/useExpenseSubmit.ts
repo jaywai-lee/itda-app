@@ -9,6 +9,7 @@ import { useUpdateExpense } from "./useUpdateExpense";
 interface SubmitOptions {
   tripId: string;
   currency: string;
+  customExchangeRate?: number | null;
   totalBudget: number;
   currentTotalSpent: number;
   editTarget?: Expense | null;
@@ -18,6 +19,7 @@ interface SubmitOptions {
 export const useExpenseSubmit = ({
   tripId,
   currency,
+  customExchangeRate,
   totalBudget,
   currentTotalSpent,
   editTarget,
@@ -74,8 +76,10 @@ export const useExpenseSubmit = ({
     try {
       setIsCalculating(true);
 
-      const rate = await fetchExchangeRate(currency);
-      const amountKrw = Math.round(Number(amount) * rate);
+      const rate = customExchangeRate
+        ? customExchangeRate
+        : await fetchExchangeRate(currency);
+      const amountKrw = Math.round(numericAmount * rate);
       const normalizedSpentAt = new Date(spentDate);
       normalizedSpentAt.setHours(12, 0, 0, 0);
 
@@ -85,7 +89,7 @@ export const useExpenseSubmit = ({
         currency,
         amount_krw: amountKrw,
         category_id: categoryId,
-        memo,
+        memo: memo,
         photo_url: photoUrl,
         itinerary_id: linkedItineraryId,
         spent_at: normalizedSpentAt.toISOString(),

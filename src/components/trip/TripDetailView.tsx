@@ -99,6 +99,7 @@ export const TripDetailView = ({ state, handlers }: TripDetailViewProps) => {
       <CreateExpenseModal
         tripId={state.trip.id}
         currency={state.trip.currency}
+        customExchangeRate={state.trip.custom_exchange_rate}
         totalBudget={state.trip.total_budget}
         currentTotalSpent={state.totalSpent}
         visible={state.isModalVisible}

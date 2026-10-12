@@ -7,6 +7,7 @@ import { useExpenseSubmit } from "./useExpenseSubmit";
 interface UseCreateExpenseModalProps {
   tripId: string;
   currency: string;
+  customExchangeRate?: number | null;
   totalBudget: number;
   currentTotalSpent: number;
   visible: boolean;
@@ -33,6 +34,7 @@ export const useCreateExpenseModal = (props: UseCreateExpenseModalProps) => {
   const submit = useExpenseSubmit({
     tripId: props.tripId,
     currency: props.currency,
+    customExchangeRate: props.customExchangeRate,
     totalBudget: props.totalBudget,
     currentTotalSpent: props.currentTotalSpent,
     editTarget: props.editTarget,
