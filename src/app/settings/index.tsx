@@ -1,9 +1,11 @@
 import { ChangePasswordModal } from "@/components/setting/ChangePasswordModal";
+import { CountrySelectModal } from "@/components/setting/CountrySelectModal";
 import { SettingItem } from "@/components/setting/SettingItem";
 import { COLORS } from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
 import { useAuthActions } from "@/hooks/auth/useAuthActions";
 import { useChangePasswordModal } from "@/hooks/auth/useChangePasswordModal";
+import { useUserSettings } from "@/hooks/auth/useUserSettings";
 import { router } from "expo-router";
 import {
   AlertTriangle,
@@ -21,6 +23,7 @@ import {
   User,
   UserX,
 } from "lucide-react-native";
+import { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -32,8 +35,19 @@ export default function SettingsScreen() {
   const { handleLogout, handleDeleteAccount, isDeleting } = useAuthActions();
   const pwModal = useChangePasswordModal();
 
+  const { settings, updateSettings, isUpdating } = useUserSettings();
+  const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
+
   const handleComingSoon = (feature: string) => {
     Alert.alert("알림", `${feature} 기능은 곧 업데이트될 예정입니다.`);
+  };
+
+  const handleToggleKrwConversion = () => {
+    updateSettings({ show_krw_conversion: !settings.showKrwConversion });
+  };
+
+  const handleSelectDefaultCountry = (country: string, currency: string) => {
+    updateSettings({ default_country: country, default_currency: currency });
   };
 
   return (
@@ -83,13 +97,16 @@ export default function SettingsScreen() {
           <SettingItem
             icon={<Globe size={20} color={COLORS.slate.inactive} />}
             label="기본 국가/통화 설정"
-            onPress={() => handleComingSoon("기본 국가 설정")}
+            value={`${settings.defaultCountry} (${settings.defaultCurrency})`}
+            onPress={() => setIsCountryModalVisible(true)}
+            disabled={isUpdating}
           />
           <SettingItem
             icon={<RefreshCw size={20} color={COLORS.slate.inactive} />}
             label="원화 환산 표시"
-            value="켜짐"
-            onPress={() => handleComingSoon("원화 환산 표시 옵션")}
+            value={settings.showKrwConversion ? "켜짐" : "꺼짐"}
+            onPress={handleToggleKrwConversion}
+            disabled={isUpdating}
             isLast
           />
         </View>
@@ -167,6 +184,13 @@ export default function SettingsScreen() {
       </ScrollView>
 
       <ChangePasswordModal state={pwModal.state} handlers={pwModal.handlers} />
+
+      <CountrySelectModal
+        visible={isCountryModalVisible}
+        onClose={() => setIsCountryModalVisible(false)}
+        currentCountry={settings.defaultCountry}
+        onSelect={handleSelectDefaultCountry}
+      />
     </View>
   );
 }
