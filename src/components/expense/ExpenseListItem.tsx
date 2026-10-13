@@ -3,6 +3,7 @@ import { Expense } from "@/types/database";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { MapPin } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
+import { CategoryIcon } from "../common/CategoryIcon";
 
 interface ExpenseListItemProps {
   item: Expense;
@@ -21,6 +22,8 @@ export const ExpenseListItem = ({
   );
   const displayDay = dayDiff < 0 ? "준비" : `Day ${dayDiff + 1}`;
 
+  const categoryColor = item.categories?.color || COLORS.slate.inactive;
+
   return (
     <Pressable
       onPress={() => onPress(item)}
@@ -34,13 +37,23 @@ export const ExpenseListItem = ({
         </View>
 
         <View className="flex-row items-center mb-1">
+          <View
+            className="w-6 h-6 rounded-full items-center justify-center mr-2"
+            style={{ backgroundColor: `${categoryColor}20` }}
+          >
+            <CategoryIcon
+              name={item.categories?.icon}
+              color={categoryColor}
+              size={14}
+            />
+          </View>
           <Text className="text-sm font-bold text-slate-text mr-2">
             {item.categories?.name || "기타"}
           </Text>
 
           {item.itinerary_id && (
             <View className="bg-primary/10 px-1.5 py-0.5 rounded flex-row items-center max-w-[130px]">
-              <MapPin size={10} color={COLORS.primary.DEFAULT as string} />
+              <MapPin size={10} color={COLORS.primary.DEFAULT} />
               <Text
                 className="text-[10px] font-semibold text-primary ml-0.5"
                 numberOfLines={1}

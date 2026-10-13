@@ -5,13 +5,9 @@ import { Text, View } from "react-native";
 
 interface CategoryProgressBarProps {
   expenses: Expense[];
-  currency: string;
 }
 
-export const CategoryProgressBar = ({
-  expenses,
-  currency,
-}: CategoryProgressBarProps) => {
+export const CategoryProgressBar = ({ expenses }: CategoryProgressBarProps) => {
   const { totalSpent, sortedCategories } = useMemo(() => {
     let total = 0;
     const categoryMap: Record<string, { amount: number; color: string }> = {};

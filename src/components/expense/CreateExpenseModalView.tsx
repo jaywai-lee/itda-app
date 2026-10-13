@@ -15,6 +15,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { CategoryIcon } from "../common/CategoryIcon";
 import { Modal } from "../common/Modal";
 
 export interface CreateExpenseFormState {
@@ -106,29 +107,39 @@ export const CreateExpenseModalView = ({
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
               className="mb-4"
             >
-              {categories.map((cat) => (
-                <Pressable
-                  key={cat.id}
-                  onPress={() => handlers.onSelectCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full mr-2 border ${
-                    formState.categoryId === cat.id
-                      ? "bg-primary border-primary"
-                      : "bg-slate-bg border-slate-border"
-                  }`}
-                >
-                  <Text
-                    className={`font-semibold ${
-                      formState.categoryId === cat.id
-                        ? "text-white"
-                        : "text-slate-text"
-                    }`}
+              {categories.map((cat) => {
+                const isSelected = formState.categoryId === cat.id;
+                const tint = cat.color || COLORS.primary.DEFAULT;
+
+                return (
+                  <Pressable
+                    key={cat.id}
+                    onPress={() => handlers.onSelectCategory(cat.id)}
+                    className="flex-row items-center px-3.5 py-2 rounded-full mr-2 border"
+                    style={{
+                      backgroundColor: isSelected ? tint : `${tint}15`,
+                      borderColor: isSelected ? tint : `${tint}40`,
+                    }}
                   >
-                    {cat.name}
-                  </Text>
-                </Pressable>
-              ))}
+                    <CategoryIcon
+                      name={cat.icon}
+                      color={isSelected ? "#FFFFFF" : tint}
+                      size={16}
+                    />
+                    <Text
+                      className="font-semibold ml-1.5"
+                      style={{
+                        color: isSelected ? "#FFFFFF" : COLORS.slate.text,
+                      }}
+                    >
+                      {cat.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           )}
 
