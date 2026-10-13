@@ -24,7 +24,7 @@ export const TripSummaryCard = ({
 
       {expenses && expenses.length > 0 && (
         <View className="py-3">
-          <CategoryProgressBar expenses={expenses} currency={trip.currency} />
+          <CategoryProgressBar expenses={expenses} />
         </View>
       )}
     </View>

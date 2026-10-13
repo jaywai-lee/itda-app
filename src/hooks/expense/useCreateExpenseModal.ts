@@ -19,7 +19,7 @@ interface UseCreateExpenseModalProps {
 
 export const useCreateExpenseModal = (props: UseCreateExpenseModalProps) => {
   const { data: categories = [], isLoading: isLoadingCategories } =
-    useCategories(props.tripId);
+    useCategories();
 
   const form = useExpenseForm(
     props.visible,

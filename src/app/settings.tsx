@@ -38,16 +38,10 @@ export default function SettingsScreen() {
 
       <ScrollView className="flex-1 pt-4">
         <View className="bg-white border-y border-slate-border mb-6">
-          <Pressable className="flex-row justify-between items-center p-4 border-b border-slate-border active:bg-slate-50">
-            <Text className="text-base text-slate-text font-medium">
-              통화 및 환율 관리
-            </Text>
-            <ChevronRight
-              size={20}
-              color={COLORS.slate?.inactive || "#94a3b8"}
-            />
-          </Pressable>
-          <Pressable className="flex-row justify-between items-center p-4 border-b border-slate-border active:bg-slate-50">
+          <Pressable
+            onPress={() => router.push("/settings/categories")}
+            className="flex-row justify-between items-center p-4 border-b border-slate-border active:bg-slate-50"
+          >
             <Text className="text-base text-slate-text font-medium">
               카테고리 커스터마이징
             </Text>

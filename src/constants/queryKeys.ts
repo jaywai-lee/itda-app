@@ -17,7 +17,6 @@ export const QUERY_KEYS = {
   },
   CATEGORIES: {
     ALL: ["categories"] as const,
-    BY_TRIP: (tripId?: string) =>
-      [...QUERY_KEYS.CATEGORIES.ALL, "trip", tripId ?? "default"] as const,
+    LIST: () => [...QUERY_KEYS.CATEGORIES.ALL, "list"] as const,
   },
 } as const;
