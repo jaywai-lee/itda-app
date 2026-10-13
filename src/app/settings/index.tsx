@@ -1,12 +1,14 @@
+import { ChangePasswordModal } from "@/components/setting/ChangePasswordModal";
+import { SettingItem } from "@/components/setting/SettingItem";
 import { COLORS } from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
-import { useDeleteAccount } from "@/hooks/auth/useDeleteAccount";
+import { useAuthActions } from "@/hooks/auth/useAuthActions";
+import { useChangePasswordModal } from "@/hooks/auth/useChangePasswordModal";
 import { router } from "expo-router";
 import {
   AlertTriangle,
   Bell,
   ChevronLeft,
-  ChevronRight,
   Download,
   FileText,
   Globe,
@@ -19,101 +21,16 @@ import {
   User,
   UserX,
 } from "lucide-react-native";
-import React from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-interface SettingItemProps {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
-  hideChevron?: boolean;
-  isDanger?: boolean;
-  onPress?: () => void;
-  isLast?: boolean;
-  disabled?: boolean;
-}
-
-const SettingItem = ({
-  icon,
-  label,
-  value,
-  hideChevron = false,
-  isDanger = false,
-  onPress,
-  isLast = false,
-  disabled = false,
-}: SettingItemProps) => (
-  <Pressable
-    onPress={onPress}
-    disabled={disabled}
-    className={`flex-row justify-between items-center p-4 ${
-      disabled ? "opacity-50" : "active:bg-slate-50"
-    } ${!isLast ? "border-b border-slate-border" : ""}`}
-  >
-    <View className="flex-row items-center">
-      {icon}
-      <Text
-        className={`text-base font-medium ml-3 ${
-          isDanger ? "text-budget-danger" : "text-slate-text"
-        }`}
-      >
-        {label}
-      </Text>
-    </View>
-    <View className="flex-row items-center">
-      {value && (
-        <Text className="text-sm text-slate-inactive mr-2">{value}</Text>
-      )}
-      {!hideChevron && <ChevronRight size={20} color={COLORS.slate.inactive} />}
-    </View>
-  </Pressable>
-);
-
 export default function SettingsScreen() {
-  const { session, signOut } = useAuth();
-  const { deleteAccount, isPending } = useDeleteAccount();
+  const { session } = useAuth();
   const insets = useSafeAreaInsets();
   const userEmail = session?.user?.email || "이메일 정보 없음";
 
-  const handleLogout = () => {
-    Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "로그아웃",
-        style: "destructive",
-        onPress: async () => {
-          await signOut();
-          router.replace("/login");
-        },
-      },
-    ]);
-  };
-
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      "회원 탈퇴",
-      "탈퇴 시 등록된 모든 여행 및 가계부 데이터가 영구적으로 삭제됩니다.\n정말 탈퇴하시겠습니까?",
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "탈퇴하기",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteAccount();
-              router.replace("/login");
-            } catch (error) {
-              Alert.alert(
-                "오류",
-                "회원 탈퇴 처리 중 문제가 발생했습니다. 다시 시도해 주세요.",
-              );
-            }
-          },
-        },
-      ],
-    );
-  };
+  const { handleLogout, handleDeleteAccount, isDeleting } = useAuthActions();
+  const pwModal = useChangePasswordModal();
 
   const handleComingSoon = (feature: string) => {
     Alert.alert("알림", `${feature} 기능은 곧 업데이트될 예정입니다.`);
@@ -149,7 +66,7 @@ export default function SettingsScreen() {
           <SettingItem
             icon={<Lock size={20} color={COLORS.slate.inactive} />}
             label="비밀번호 변경"
-            onPress={() => handleComingSoon("비밀번호 변경")}
+            onPress={pwModal.handlers.openModal}
             isLast
           />
         </View>
@@ -236,18 +153,20 @@ export default function SettingsScreen() {
             icon={<LogOut size={20} color={COLORS.slate.text} />}
             label="로그아웃"
             onPress={handleLogout}
-            disabled={isPending}
+            disabled={isDeleting}
           />
           <SettingItem
             icon={<UserX size={20} color={COLORS.budget.danger} />}
-            label={isPending ? "처리 중..." : "회원 탈퇴"}
+            label={isDeleting ? "처리 중..." : "회원 탈퇴"}
             isDanger
             onPress={handleDeleteAccount}
             isLast
-            disabled={isPending}
+            disabled={isDeleting}
           />
         </View>
       </ScrollView>
+
+      <ChangePasswordModal state={pwModal.state} handlers={pwModal.handlers} />
     </View>
   );
 }
