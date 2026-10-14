@@ -9,12 +9,14 @@ interface ExpenseListItemProps {
   item: Expense;
   tripStartDate: string;
   onPress: (expense: Expense) => void;
+  showKrwConversion?: boolean;
 }
 
 export const ExpenseListItem = ({
   item,
   tripStartDate,
   onPress,
+  showKrwConversion,
 }: ExpenseListItemProps) => {
   const dayDiff = differenceInCalendarDays(
     parseISO(item.spent_at),
@@ -77,11 +79,13 @@ export const ExpenseListItem = ({
         <Text className="text-base font-bold text-slate-text">
           {item.amount.toLocaleString()} {item.currency}
         </Text>
-        {item.currency !== "KRW" && item.amount_krw != null && (
-          <Text className="text-xs text-slate-inactive mt-0.5">
-            ≈ {item.amount_krw.toLocaleString()} KRW
-          </Text>
-        )}
+        {showKrwConversion &&
+          item.currency !== "KRW" &&
+          item.amount_krw != null && (
+            <Text className="text-xs text-slate-inactive mt-0.5">
+              ≈ {item.amount_krw.toLocaleString()} KRW
+            </Text>
+          )}
       </View>
     </Pressable>
   );

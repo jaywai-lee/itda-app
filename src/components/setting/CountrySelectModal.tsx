@@ -7,6 +7,7 @@ interface CountrySelectModalProps {
   onClose: () => void;
   currentCountry: string;
   onSelect: (country: string, currency: string) => void;
+  isUpdating?: boolean;
 }
 
 export const CountrySelectModal = ({
@@ -14,6 +15,7 @@ export const CountrySelectModal = ({
   onClose,
   currentCountry,
   onSelect,
+  isUpdating,
 }: CountrySelectModalProps) => {
   return (
     <Modal visible={visible} onClose={onClose}>
@@ -28,9 +30,9 @@ export const CountrySelectModal = ({
             return (
               <Pressable
                 key={item.currency}
+                disabled={isUpdating}
                 onPress={() => {
                   onSelect(item.label, item.currency);
-                  onClose();
                 }}
                 className={`p-4 flex-row justify-between items-center active:bg-slate-50 ${
                   index !== COUNTRIES.length - 1
