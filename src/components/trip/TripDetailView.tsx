@@ -19,6 +19,7 @@ export interface TripDetailViewState {
   totalSpent: number;
   isModalVisible: boolean;
   selectedExpense: Expense | null;
+  showKrwConversion: boolean;
 }
 
 export interface TripDetailViewHanlders {
@@ -90,6 +91,7 @@ export const TripDetailView = ({ state, handlers }: TripDetailViewProps) => {
                 item={item}
                 tripStartDate={state.trip.start_date}
                 onPress={handlers.onOpenEditModal}
+                showKrwConversion={state.showKrwConversion}
               />
             )}
           />

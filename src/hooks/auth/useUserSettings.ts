@@ -16,16 +16,18 @@ export const useUserSettings = () => {
     default_country?: string;
     default_currency?: string;
     show_krw_conversion?: boolean;
-  }) => {
+  }): Promise<boolean> => {
     try {
       setIsUpdating(true);
       const { error } = await supabase.auth.updateUser({
         data: { ...metadata, ...newSettings },
       });
-
       if (error) throw error;
+      return true;
     } catch (error) {
+      console.error("[useUserSettings] update failed:", error);
       Alert.alert("오류", "설정 업데이트에 실패했습니다. 다시 시도해 주세요.");
+      return false;
     } finally {
       setIsUpdating(false);
     }

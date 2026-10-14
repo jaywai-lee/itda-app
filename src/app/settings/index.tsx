@@ -42,12 +42,33 @@ export default function SettingsScreen() {
     Alert.alert("알림", `${feature} 기능은 곧 업데이트될 예정입니다.`);
   };
 
-  const handleToggleKrwConversion = () => {
-    updateSettings({ show_krw_conversion: !settings.showKrwConversion });
+  const handleToggleKrwConversion = async () => {
+    const next = !settings.showKrwConversion;
+    const ok = await updateSettings({ show_krw_conversion: next });
+    if (!ok) return;
+
+    Alert.alert(
+      "설정 완료",
+      next ? "원화 환산 표시가 켜졌습니다." : "원화 환산 표시가 꺼졌습니다.",
+    );
   };
 
-  const handleSelectDefaultCountry = (country: string, currency: string) => {
-    updateSettings({ default_country: country, default_currency: currency });
+  const handleSelectDefaultCountry = async (
+    country: string,
+    currency: string,
+  ) => {
+    const ok = await updateSettings({
+      default_country: country,
+      default_currency: currency,
+    });
+    if (!ok) return;
+
+    setIsCountryModalVisible(false);
+
+    Alert.alert(
+      "설정 완료",
+      `기본 국가/통화가 ${country} (${currency})로 변경되었습니다.`,
+    );
   };
 
   return (
@@ -190,6 +211,7 @@ export default function SettingsScreen() {
         onClose={() => setIsCountryModalVisible(false)}
         currentCountry={settings.defaultCountry}
         onSelect={handleSelectDefaultCountry}
+        isUpdating={isUpdating}
       />
     </View>
   );

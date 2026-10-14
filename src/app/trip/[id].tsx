@@ -1,4 +1,5 @@
 import { TripDetailView } from "@/components/trip/TripDetailView";
+import { useUserSettings } from "@/hooks/auth/useUserSettings";
 import { useExpenses } from "@/hooks/expense/useExpenses";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Expense } from "@/types/database";
@@ -15,6 +16,8 @@ export default function TripDetailScreen() {
   const { data: trips } = useTrips();
   const trip = trips?.find((t) => t.id === id);
   const { data: expenses, isLoading } = useExpenses(id);
+
+  const { settings } = useUserSettings();
 
   if (!trip) return null;
 
@@ -39,6 +42,7 @@ export default function TripDetailScreen() {
         totalSpent,
         isModalVisible,
         selectedExpense,
+        showKrwConversion: settings.showKrwConversion,
       }}
       handlers={{
         onGoBack: () => router.back(),
