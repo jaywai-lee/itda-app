@@ -11,11 +11,15 @@ export const useUserSettings = () => {
   const defaultCountry = metadata.default_country || "대한민국";
   const defaultCurrency = metadata.default_currency || "KRW";
   const showKrwConversion = metadata.show_krw_conversion ?? true;
+  const isReminderEnabled = metadata.is_reminder_enabled ?? false;
+  const reminderTime = metadata.reminder_time || "20:00";
 
   const updateSettings = async (newSettings: {
     default_country?: string;
     default_currency?: string;
     show_krw_conversion?: boolean;
+    is_reminder_enabled?: boolean;
+    reminder_time?: string;
   }): Promise<boolean> => {
     try {
       setIsUpdating(true);
@@ -34,7 +38,13 @@ export const useUserSettings = () => {
   };
 
   return {
-    settings: { defaultCountry, defaultCurrency, showKrwConversion },
+    settings: {
+      defaultCountry,
+      defaultCurrency,
+      showKrwConversion,
+      isReminderEnabled,
+      reminderTime,
+    },
     updateSettings,
     isUpdating,
   };
