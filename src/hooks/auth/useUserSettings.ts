@@ -13,6 +13,7 @@ export const useUserSettings = () => {
   const showKrwConversion = metadata.show_krw_conversion ?? true;
   const isReminderEnabled = metadata.is_reminder_enabled ?? false;
   const reminderTime = metadata.reminder_time || "20:00";
+  const budgetWarningThreshold = metadata.budget_warning_threshold || 0;
 
   const updateSettings = async (newSettings: {
     default_country?: string;
@@ -20,6 +21,7 @@ export const useUserSettings = () => {
     show_krw_conversion?: boolean;
     is_reminder_enabled?: boolean;
     reminder_time?: string;
+    budget_warning_threshold?: number;
   }): Promise<boolean> => {
     try {
       setIsUpdating(true);
@@ -44,6 +46,7 @@ export const useUserSettings = () => {
       showKrwConversion,
       isReminderEnabled,
       reminderTime,
+      budgetWarningThreshold,
     },
     updateSettings,
     isUpdating,
