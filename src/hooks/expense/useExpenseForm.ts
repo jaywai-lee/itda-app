@@ -2,7 +2,6 @@ import { Category, Expense } from "@/types/database";
 import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { parseISO } from "date-fns";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
 
 export const useExpenseForm = (
   visible: boolean,
@@ -49,8 +48,10 @@ export const useExpenseForm = (
     date: Date,
   ) => {
     setSpentDate(date);
-    if (Platform.OS === "android") setIsDatePickerOpen(false);
+    setIsDatePickerOpen(false);
   };
+
+  const handleDismissDatePicker = () => setIsDatePickerOpen(false);
 
   return {
     state: {
@@ -69,6 +70,7 @@ export const useExpenseForm = (
     },
     handlers: {
       handleChangeSpentDate,
+      handleDismissDatePicker,
     },
   };
 };

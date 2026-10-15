@@ -3,7 +3,7 @@ import { Trip } from "@/types/database";
 import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { parseISO } from "date-fns";
 import { useEffect, useState } from "react";
-import { Alert, Platform } from "react-native";
+import { Alert } from "react-native";
 
 export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
   const [name, setName] = useState("");
@@ -55,21 +55,17 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
     event: DateTimePickerChangeEvent,
     selectedDate: Date,
   ) => {
-    if (Platform.OS === "android") {
-      setPickerType(null);
-    }
-
     if (pickerType === "start") {
       setStartDate(selectedDate);
-      if (selectedDate > endDate) {
-        setEndDate(selectedDate);
-      }
+      if (selectedDate > endDate) setEndDate(selectedDate);
+      setPickerType(null);
     } else if (pickerType === "end") {
       if (selectedDate < startDate) {
         Alert.alert("알림", "종료일은 시작일보다 이전일 수 없습니다.");
         return;
       }
       setEndDate(selectedDate);
+      setPickerType(null);
     }
   };
 

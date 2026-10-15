@@ -34,6 +34,7 @@ export interface CreateExpenseFormHandlers {
   onPickImage: () => void;
   onRemoveImage: () => void;
   onToggleDatePicker: (isOpen: boolean) => void;
+  onDismissDatePicker: () => void;
   onChangeSpentDate: (event: DateTimePickerChangeEvent, date: Date) => void;
   onSubmit: () => void;
   onDelete: () => void;
@@ -62,6 +63,18 @@ export const CreateExpenseModalView = ({
   categories,
   isLoadingCategories,
 }: CreateExpenseModalViewProps) => {
+  const { isDatePickerOpen } = formState;
+
+  const picker = isDatePickerOpen ? (
+    <DateTimePicker
+      value={formState.spentDate}
+      mode="date"
+      display={Platform.OS === "ios" ? "inline" : "default"}
+      onValueChange={handlers.onChangeSpentDate}
+      onDismiss={handlers.onDismissDatePicker}
+    />
+  ) : null;
+
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title={isEditMode ? "지출 수정" : "지출 추가"} />
@@ -69,6 +82,7 @@ export const CreateExpenseModalView = ({
       <Modal.Body>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
           className="max-h-[65vh]"
         >
           <Text className="text-sm font-semibold text-slate-text mb-1">
@@ -87,7 +101,9 @@ export const CreateExpenseModalView = ({
           </Text>
           <Pressable
             onPress={() => handlers.onToggleDatePicker(true)}
-            className="border border-slate-border rounded-xl p-3 mb-4 bg-white active:bg-slate-bg"
+            className={`border rounded-xl p-3 mb-4 bg-white active:bg-slate-bg ${
+              isDatePickerOpen ? "border-primary" : "border-slate-border"
+            }`}
           >
             <Text className="text-slate-text">
               {format(formState.spentDate, "yyyy-MM-dd")}
@@ -191,28 +207,24 @@ export const CreateExpenseModalView = ({
           />
         </ScrollView>
 
-        {formState.isDatePickerOpen && (
+        {isDatePickerOpen && Platform.OS === "ios" && (
           <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border border-slate-border rounded-3xl shadow-2xl z-50">
             <View className="flex-row justify-between items-center mb-2 px-2">
               <Text className="text-base font-bold text-slate-text">
                 📅 결제일 선택
               </Text>
               <Pressable
-                onPress={() => handlers.onToggleDatePicker(false)}
+                onPress={handlers.onDismissDatePicker}
                 className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
               >
-                <Text className="text-slate-text font-bold text-sm">확인</Text>
+                <Text className="text-slate-text font-bold text-sm">닫기</Text>
               </Pressable>
             </View>
-            <DateTimePicker
-              value={formState.spentDate}
-              mode="date"
-              display={Platform.OS === "ios" ? "inline" : "default"}
-              onValueChange={handlers.onChangeSpentDate}
-              onDismiss={() => handlers.onToggleDatePicker(false)}
-            />
+            {picker}
           </View>
         )}
+
+        {isDatePickerOpen && Platform.OS === "android" && picker}
       </Modal.Body>
 
       <View className="flex-row gap-3 pt-2">

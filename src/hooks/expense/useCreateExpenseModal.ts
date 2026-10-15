@@ -64,6 +64,7 @@ export const useCreateExpenseModal = (props: UseCreateExpenseModalProps) => {
       onPickImage: image.handlePickImage,
       onRemoveImage: image.handleRemoveImage,
       onToggleDatePicker: form.setters.setIsDatePickerOpen,
+      onDismissDatePicker: form.handlers.handleDismissDatePicker,
       onChangeSpentDate: form.handlers.handleChangeSpentDate,
       onSubmit: handleFinalSubmit,
       onDelete: submit.handleDelete,
