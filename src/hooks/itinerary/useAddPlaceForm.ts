@@ -2,7 +2,6 @@ import { Itinerary } from "@/types/database";
 import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { parseISO } from "date-fns";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
 
 export const useAddPlaceForm = (
   visible: boolean,
@@ -48,13 +47,11 @@ export const useAddPlaceForm = (
   };
 
   const handleChangeDate = (event: DateTimePickerChangeEvent, date: Date) => {
-    if (date) setVisitDate(date);
-    if (Platform.OS === "android") setIsDatePickerOpen(false);
-  };
-
-  const handleDismissDatePicker = () => {
+    setVisitDate(date);
     setIsDatePickerOpen(false);
   };
+
+  const handleDismissDatePicker = () => setIsDatePickerOpen(false);
 
   return {
     state: { placeName, lat, lng, visitDate, memo, isDatePickerOpen },

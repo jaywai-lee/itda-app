@@ -13,18 +13,6 @@ Notifications.setNotificationHandler({
 const DAILY_REMINDER_ID = "daily-expense-reminder";
 
 export async function requestNotificationPermission() {
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== "granted") {
-    return false;
-  }
-
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -34,7 +22,15 @@ export async function requestNotificationPermission() {
     });
   }
 
-  return true;
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  return finalStatus === "granted";
 }
 
 export async function scheduleDailyReminder(hour: number, minute: number) {

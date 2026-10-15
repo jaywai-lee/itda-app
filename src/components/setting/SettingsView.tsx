@@ -4,6 +4,9 @@ import { SettingItem } from "@/components/setting/SettingItem";
 import { COLORS } from "@/constants/colors";
 import { useChangePasswordModal } from "@/hooks/auth/useChangePasswordModal";
 import { useUserSettings } from "@/hooks/auth/useUserSettings";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import { Href } from "expo-router";
 import {
   AlertTriangle,
@@ -21,7 +24,7 @@ import {
   User,
   UserX,
 } from "lucide-react-native";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type UserSettingsHook = ReturnType<typeof useUserSettings>;
@@ -33,6 +36,8 @@ export interface SettingsViewState {
   isUpdating: boolean;
   isDeleting: boolean;
   isCountryModalVisible: boolean;
+  isTimePickerVisible: boolean;
+  reminderDraftTime: Date | null;
   pwModalState: PwModalHook["state"];
 }
 
@@ -44,6 +49,10 @@ export interface SettingsViewHandlers {
   onSelectDefaultCountry: (country: string, currency: string) => void;
   onToggleReminder: () => void;
   onToggleCountryModal: (visible: boolean) => void;
+  onToggleTimePicker: (visible: boolean) => void;
+  onChangeReminderTime: (event: DateTimePickerChangeEvent, date: Date) => void;
+  onConfirmTimePicker: () => void;
+  onDismissTimePicker: () => void;
   onLogout: () => void;
   onDeleteAccount: () => void;
   pwModalHandlers: PwModalHook["handlers"];
@@ -56,6 +65,24 @@ interface SettingsViewProps {
 
 export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
   const insets = useSafeAreaInsets();
+
+  const getReminderDate = () => {
+    const d = new Date();
+    const [h, m] = state.settings.reminderTime.split(":").map(Number);
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  const timePicker = state.isTimePickerVisible ? (
+    <DateTimePicker
+      value={state.reminderDraftTime ?? getReminderDate()}
+      mode="time"
+      display={Platform.OS === "ios" ? "spinner" : "default"}
+      onValueChange={handlers.onChangeReminderTime}
+      onDismiss={handlers.onDismissTimePicker}
+      style={{ alignSelf: "center" }}
+    />
+  ) : null;
 
   return (
     <View className="flex-1 bg-slate-bg" style={{ paddingTop: insets.top }}>
@@ -131,10 +158,11 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
           />
           {state.settings.isReminderEnabled && (
             <SettingItem
-              icon={<Bell size={20} color="transparent" />}
+              icon={<Bell size={20} color={COLORS.slate.inactive} />}
               label="리마인더 시간 설정"
               value={state.settings.reminderTime}
-              onPress={() => handlers.onComingSoon("시간 설정(DateTimePicker)")}
+              onPress={() => handlers.onToggleTimePicker(true)}
+              disabled={state.isUpdating}
             />
           )}
           <SettingItem
@@ -211,6 +239,34 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
         onSelect={handlers.onSelectDefaultCountry}
         isUpdating={state.isUpdating}
       />
+
+      {state.isTimePickerVisible && Platform.OS === "ios" && (
+        <>
+          <Pressable
+            onPress={handlers.onDismissTimePicker}
+            className="absolute inset-0 z-40"
+          />
+          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border-t border-slate-border rounded-t-3xl shadow-2xl z-50">
+            <View className="flex-row justify-between items-center mb-2 px-2">
+              <Text className="text-base font-bold text-slate-text">
+                ⏰ 시간 설정
+              </Text>
+              <Pressable
+                onPress={handlers.onConfirmTimePicker}
+                className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
+              >
+                <Text className="text-slate-text font-bold text-sm">확인</Text>
+              </Pressable>
+            </View>
+
+            <View className="w-full items-center justify-center py-4">
+              {timePicker}
+            </View>
+          </View>
+        </>
+      )}
+
+      {state.isTimePickerVisible && Platform.OS === "android" && timePicker}
     </View>
   );
 };

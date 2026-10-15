@@ -49,6 +49,20 @@ export const CreateTripModalView = ({
   isPending,
   isEditMode,
 }: CreateTripModalViewProps) => {
+  const { pickerType } = formState;
+
+  const picker = pickerType ? (
+    <DateTimePicker
+      key={pickerType}
+      value={pickerType === "start" ? formState.startDate : formState.endDate}
+      minimumDate={pickerType === "end" ? formState.startDate : undefined}
+      mode="date"
+      display={Platform.OS === "ios" ? "inline" : "default"}
+      onValueChange={handlers.onSelectDate}
+      onDismiss={handlers.onDismissPicker}
+    />
+  ) : null;
+
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title={isEditMode ? "여행 정보 수정" : "새 여행 추가"} />
@@ -135,7 +149,11 @@ export const CreateTripModalView = ({
             </Text>
             <Pressable
               onPress={() => handlers.onOpenPicker("start")}
-              className="border border-slate-border rounded-xl p-3 bg-white"
+              className={`border rounded-xl p-3 bg-white ${
+                pickerType === "start"
+                  ? "border-primary"
+                  : "border-slate-border"
+              }`}
             >
               <Text className="text-slate-text">
                 {format(formState.startDate, "yyyy-MM-dd")}
@@ -148,7 +166,9 @@ export const CreateTripModalView = ({
             </Text>
             <Pressable
               onPress={() => handlers.onOpenPicker("end")}
-              className="border border-slate-border rounded-xl p-3 bg-white"
+              className={`border rounded-xl p-3 bg-white ${
+                pickerType === "end" ? "border-primary" : "border-slate-border"
+              }`}
             >
               <Text className="text-slate-text">
                 {format(formState.endDate, "yyyy-MM-dd")}
@@ -170,38 +190,24 @@ export const CreateTripModalView = ({
           />
         </View>
 
-        {formState.pickerType && (
+        {pickerType && Platform.OS === "ios" && (
           <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border-t border-slate-border rounded-t-3xl shadow-2xl z-50">
             <View className="flex-row justify-between items-center mb-2 px-2">
               <Text className="text-base font-bold text-slate-text">
-                {formState.pickerType === "start"
-                  ? "🛫 시작일 선택"
-                  : "🛬 종료일 선택"}
+                {pickerType === "start" ? "🛫 시작일 선택" : "🛬 종료일 선택"}
               </Text>
               <Pressable
                 onPress={handlers.onDismissPicker}
                 className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
               >
-                <Text className="text-slate-text font-bold text-sm">확인</Text>
+                <Text className="text-slate-text font-bold text-sm">닫기</Text>
               </Pressable>
             </View>
-
-            <DateTimePicker
-              value={
-                formState.pickerType === "start"
-                  ? formState.startDate
-                  : formState.endDate
-              }
-              minimumDate={
-                formState.pickerType === "end" ? formState.startDate : undefined
-              }
-              mode="date"
-              display={Platform.OS === "ios" ? "inline" : "default"}
-              onValueChange={handlers.onSelectDate}
-              onDismiss={handlers.onDismissPicker}
-            />
+            {picker}
           </View>
         )}
+
+        {pickerType && Platform.OS === "android" && picker}
       </Modal.Body>
 
       <Modal.Footer>

@@ -41,6 +41,18 @@ export const AddPlaceModalView = ({
   isPending = false,
   isEditMode = false,
 }: AddPlaceModalViewProps) => {
+  const { isDatePickerOpen } = formState;
+
+  const picker = isDatePickerOpen ? (
+    <DateTimePicker
+      value={formState.visitDate}
+      mode="date"
+      display={Platform.OS === "ios" ? "inline" : "default"}
+      onValueChange={handlers.onChangeDate}
+      onDismiss={handlers.onDismissDatePicker}
+    />
+  ) : null;
+
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title={isEditMode ? "장소 수정" : "장소 추가"} />
@@ -98,7 +110,9 @@ export const AddPlaceModalView = ({
           </Text>
           <Pressable
             onPress={() => handlers.onToggleDatePicker(true)}
-            className="border border-slate-border rounded-xl p-3 bg-white"
+            className={`border rounded-xl p-3 bg-white ${
+              isDatePickerOpen ? "border-primary" : "border-slate-border"
+            }`}
           >
             <Text className="text-slate-text">
               {format(formState.visitDate, "yyyy-MM-dd")}
@@ -118,28 +132,24 @@ export const AddPlaceModalView = ({
           />
         </View>
 
-        {formState.isDatePickerOpen && (
-          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border border-slate-border rounded-3xl shadoe-2xl z-50">
+        {isDatePickerOpen && Platform.OS === "ios" && (
+          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border border-slate-border rounded-3xl shadow-2xl z-50">
             <View className="flex-row justify-between items-center mb-2 px-2">
               <Text className="text-base font-bold text-slate-text">
                 📅 날짜 선택
               </Text>
               <Pressable
-                onPress={() => handlers.onToggleDatePicker(false)}
+                onPress={handlers.onDismissDatePicker}
                 className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
               >
-                <Text className="text-slate-text font-bold text-sm">확인</Text>
+                <Text className="text-slate-text font-bold text-sm">닫기</Text>
               </Pressable>
             </View>
-            <DateTimePicker
-              value={formState.visitDate}
-              mode="date"
-              display={Platform.OS === "ios" ? "inline" : "default"}
-              onValueChange={handlers.onChangeDate}
-              onDismiss={handlers.onDismissDatePicker}
-            />
+            {picker}
           </View>
         )}
+
+        {isDatePickerOpen && Platform.OS === "android" && picker}
       </Modal.Body>
 
       <Modal.Footer>
