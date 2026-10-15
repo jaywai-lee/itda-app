@@ -26,6 +26,7 @@ import {
 } from "lucide-react-native";
 import { Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BudgetThresholdModal } from "./BudgetThresholdModal";
 
 type UserSettingsHook = ReturnType<typeof useUserSettings>;
 type PwModalHook = ReturnType<typeof useChangePasswordModal>;
@@ -39,6 +40,7 @@ export interface SettingsViewState {
   isTimePickerVisible: boolean;
   reminderDraftTime: Date | null;
   pwModalState: PwModalHook["state"];
+  isBudgetModalVisible: boolean;
 }
 
 export interface SettingsViewHandlers {
@@ -56,6 +58,8 @@ export interface SettingsViewHandlers {
   onLogout: () => void;
   onDeleteAccount: () => void;
   pwModalHandlers: PwModalHook["handlers"];
+  onToggleBudgetModal: (visible: boolean) => void;
+  onSelectBudgetThreshold: (threshold: number) => void;
 }
 
 interface SettingsViewProps {
@@ -71,6 +75,11 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
     const [h, m] = state.settings.reminderTime.split(":").map(Number);
     d.setHours(h, m, 0, 0);
     return d;
+  };
+
+  const getBudgetThresholdLabel = (val: number) => {
+    if (!val || val === 0) return "꺼짐";
+    return `${val}%`;
   };
 
   const timePicker = state.isTimePickerVisible ? (
@@ -168,8 +177,10 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
           <SettingItem
             icon={<AlertTriangle size={20} color={COLORS.slate.inactive} />}
             label="예산 경고 기준"
-            value="80%"
-            onPress={() => handlers.onComingSoon("예산 경고 기준 설정")}
+            value={getBudgetThresholdLabel(
+              state.settings.budgetWarningThreshold,
+            )}
+            onPress={() => handlers.onToggleBudgetModal(true)}
             isLast
           />
         </View>
@@ -237,6 +248,14 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
         onClose={() => handlers.onToggleCountryModal(false)}
         currentCountry={state.settings.defaultCountry}
         onSelect={handlers.onSelectDefaultCountry}
+        isUpdating={state.isUpdating}
+      />
+
+      <BudgetThresholdModal
+        visible={state.isBudgetModalVisible}
+        onClose={() => handlers.onToggleBudgetModal(false)}
+        currentThreshold={state.settings.budgetWarningThreshold || 80}
+        onSelect={handlers.onSelectBudgetThreshold}
         isUpdating={state.isUpdating}
       />
 

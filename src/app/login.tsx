@@ -39,11 +39,6 @@ export default function LoginScreen() {
     setLoading(false);
   };
 
-  const handleOAuthLogin = (provider: string) => {
-    // 추후 supabase OAuth 로직이 연결될 자리
-    Alert.alert("알림", `${provider} 로그인은 곧 지원될 예정입니다.`);
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -99,30 +94,6 @@ export default function LoginScreen() {
         >
           <Text className="text-white font-bold text-base">로그인</Text>
         </Pressable>
-
-        <View className="flex-row items-center my-8">
-          <View className="flex-1 h-[1px] bg-slate-border" />
-          <Text className="mx-4 text-xs font-medium text-slate-inactive">
-            또는
-          </Text>
-          <View className="flex-1 h-[1px] bg-slate-border" />
-        </View>
-
-        <View className="space-y-3 mb-10">
-          <Pressable
-            onPress={() => handleOAuthLogin("Google")}
-            className="bg-white border border-slate-border p-4 rounded-2xl items-center active:opacity-60 mb-3"
-          >
-            <Text className="text-slate-text font-bold text-base">G</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => handleOAuthLogin("Kakao")}
-            className="bg-[#000000] p-4 rounded-2xl items-center active:opacity-80"
-          >
-            <Text className="text-slate-text font-bold text-base">K</Text>
-          </Pressable>
-        </View>
 
         <View className="flex-row justify-center items-center mt-auto mb-4">
           <Text className="text-sm text-slate-inactive font-medium">
