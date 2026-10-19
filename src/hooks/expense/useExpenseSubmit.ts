@@ -2,6 +2,7 @@ import { Expense } from "@/types/database";
 import { fetchExchangeRate } from "@/utils/currency";
 import { useState } from "react";
 import { Alert } from "react-native";
+import { useUserSettings } from "../auth/useUserSettings";
 import { useCreateExpense } from "./useCreateExpense";
 import { useDeleteExpense } from "./useDeleteExpense";
 import { useUpdateExpense } from "./useUpdateExpense";
@@ -26,6 +27,7 @@ export const useExpenseSubmit = ({
   onClose,
 }: SubmitOptions) => {
   const [isCalculating, setIsCalculating] = useState(false);
+  const { settings } = useUserSettings();
 
   const { mutate: createExpense, isPending: isCreating } = useCreateExpense();
   const { mutate: updateExpense, isPending: isUpdating } = useUpdateExpense();
@@ -54,23 +56,35 @@ export const useExpenseSubmit = ({
       : currentTotalSpent;
     const nextTotalSpent = effectiveCurrentSpent + numericAmount;
 
-    if (nextTotalSpent > totalBudget) {
-      const isConfirmed = await new Promise<boolean>((resolve) => {
-        Alert.alert(
-          "⚠️ 예산 초과 경고",
-          `이 지출을 등록하면 총 예산(${totalBudget.toLocaleString()} ${currency})을 초과하게 됩니다.\n그래도 등록하시겠습니까?`,
-          [
+    const thresholdPercent = settings.budgetWarningThreshold;
+
+    if (totalBudget > 0 && thresholdPercent > 0) {
+      const warningThresholdAmount = (totalBudget * thresholdPercent) / 100;
+
+      let warningTitle = "";
+      let warningMessage = "";
+      if (nextTotalSpent > totalBudget) {
+        warningTitle = "⚠️ 예산 초과 경고";
+        warningMessage = `이 지출을 등록하면 총 예산(${totalBudget.toLocaleString()} ${currency})을 초과하게 됩니다.\n그래도 등록하시겠습니까?`;
+      } else if (nextTotalSpent >= warningThresholdAmount) {
+        warningTitle = `⚠️ 예산 경고 (${thresholdPercent}% 달성)`;
+        warningMessage = `이 지출을 등록하면 예산 경고 기준(${thresholdPercent}%, ${warningThresholdAmount.toLocaleString()} ${currency}) 이상을 사용하게 됩니다.\n그래도 등록하시겠습니까?`;
+      }
+
+      if (warningTitle) {
+        const isConfirmed = await new Promise<boolean>((resolve) => {
+          Alert.alert(warningTitle, warningMessage, [
             { text: "취소", onPress: () => resolve(false), style: "cancel" },
             {
               text: "등록",
               onPress: () => resolve(true),
               style: "destructive",
             },
-          ],
-        );
-      });
+          ]);
+        });
 
-      if (!isConfirmed) return;
+        if (!isConfirmed) return;
+      }
     }
 
     try {
@@ -85,11 +99,11 @@ export const useExpenseSubmit = ({
 
       const expenseData = {
         trip_id: tripId,
-        amount: Number(amount),
+        amount: numericAmount,
         currency,
         amount_krw: amountKrw,
         category_id: categoryId,
-        memo: memo,
+        memo,
         photo_url: photoUrl,
         itinerary_id: linkedItineraryId,
         spent_at: normalizedSpentAt.toISOString(),
