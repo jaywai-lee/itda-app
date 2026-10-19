@@ -15,7 +15,7 @@ export const useBudgetSettings = (updateSettings: UpdateSettings) => {
         "설정 완료",
         threshold === 0
           ? "예산 경고 알림이 꺼졌습니다."
-          : `예산의 ${threshold}% 사용 시 알림이 울립니다.`,
+          : `예산의 ${threshold}% 사용 시 경고 문구가 출력됩니다.`,
       );
     }
   };

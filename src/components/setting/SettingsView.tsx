@@ -181,6 +181,7 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
               state.settings.budgetWarningThreshold,
             )}
             onPress={() => handlers.onToggleBudgetModal(true)}
+            disabled={state.isUpdating}
             isLast
           />
         </View>
@@ -254,7 +255,7 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
       <BudgetThresholdModal
         visible={state.isBudgetModalVisible}
         onClose={() => handlers.onToggleBudgetModal(false)}
-        currentThreshold={state.settings.budgetWarningThreshold || 80}
+        currentThreshold={state.settings.budgetWarningThreshold || 0}
         onSelect={handlers.onSelectBudgetThreshold}
         isUpdating={state.isUpdating}
       />

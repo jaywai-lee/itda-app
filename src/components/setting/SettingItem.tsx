@@ -22,29 +22,52 @@ export const SettingItem = ({
   onPress,
   isLast = false,
   disabled = false,
-}: SettingItemProps) => (
-  <Pressable
-    onPress={onPress}
-    disabled={disabled}
-    className={`flex-row justify-between items-center p-4 ${
-      disabled ? "opacity-50" : "active:bg-slate-50"
-    } ${!isLast ? "border-b border-slate-border" : ""}`}
-  >
-    <View className="flex-row items-center">
-      {icon}
-      <Text
-        className={`text-base font-medium ml-3 ${
-          isDanger ? "text-budget-danger" : "text-slate-text"
-        }`}
-      >
-        {label}
-      </Text>
-    </View>
-    <View className="flex-row items-center">
-      {value && (
-        <Text className="text-sm text-slate-inactive mr-2">{value}</Text>
-      )}
-      {!hideChevron && <ChevronRight size={20} color={COLORS.slate.inactive} />}
-    </View>
-  </Pressable>
-);
+}: SettingItemProps) => {
+  const isPressable = !!onPress;
+  const showChevron = isPressable && !hideChevron;
+
+  const rowClassName = `flex-row justify-between items-center p-4 ${
+    !isLast ? "border-b border-slate-border" : ""
+  }`;
+
+  const content = (
+    <>
+      <View className="flex-row items-center">
+        {icon}
+        <Text
+          className={`text-base font-medium ml-3 ${
+            isDanger ? "text-budget-danger" : "text-slate-text"
+          }`}
+        >
+          {label}
+        </Text>
+      </View>
+      <View className="flex-row items-center">
+        {value && (
+          <Text className="text-sm text-slate-inactive mr-2">{value}</Text>
+        )}
+        {showChevron && (
+          <ChevronRight size={20} color={COLORS.slate.inactive} />
+        )}
+      </View>
+    </>
+  );
+
+  if (!isPressable) {
+    return <View className={rowClassName}>{content}</View>;
+  }
+
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      className={`${rowClassName} ${
+        disabled ? "opacity-50" : "active:bg-slate-50"
+      }`}
+    >
+      {content}
+    </Pressable>
+  );
+};
