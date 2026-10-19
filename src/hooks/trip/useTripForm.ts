@@ -4,8 +4,11 @@ import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicke
 import { parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
+import { useUserSettings } from "../auth/useUserSettings";
 
 export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
+  const { settings } = useUserSettings();
+
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
@@ -38,34 +41,39 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
             : "",
         );
       } else {
+        const defaultCountry = settings?.defaultCountry ?? COUNTRIES[0].label;
+        const defaultCurrency =
+          settings?.defaultCurrency ?? COUNTRIES[0].currency;
+
         setName("");
         setStartDate(new Date());
         setEndDate(new Date());
-        setCountry(COUNTRIES[0].label);
-        setCurrency(COUNTRIES[0].currency);
+        setCountry(defaultCountry);
+        setCurrency(defaultCurrency);
         setTotalBudget("");
         setCustomExchangeRate("");
       }
       setPickerType(null);
       setIsCountryPickerOpen(false);
     }
-  }, [visible, editTarget]);
+  }, [visible, editTarget, settings]);
 
   const handleSelectDate = (
     event: DateTimePickerChangeEvent,
     selectedDate: Date,
   ) => {
-    if (pickerType === "start") {
+    const type = pickerType;
+    setPickerType(null);
+
+    if (type === "start") {
       setStartDate(selectedDate);
       if (selectedDate > endDate) setEndDate(selectedDate);
-      setPickerType(null);
-    } else if (pickerType === "end") {
+    } else if (type === "end") {
       if (selectedDate < startDate) {
         Alert.alert("알림", "종료일은 시작일보다 이전일 수 없습니다.");
         return;
       }
       setEndDate(selectedDate);
-      setPickerType(null);
     }
   };
 
