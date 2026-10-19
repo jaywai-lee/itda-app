@@ -60,6 +60,7 @@ export interface SettingsViewHandlers {
   pwModalHandlers: PwModalHook["handlers"];
   onToggleBudgetModal: (visible: boolean) => void;
   onSelectBudgetThreshold: (threshold: number) => void;
+  onContactUs: () => void;
 }
 
 interface SettingsViewProps {
@@ -205,7 +206,7 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
           <SettingItem
             icon={<Mail size={20} color={COLORS.slate.inactive} />}
             label="문의하기"
-            onPress={() => handlers.onComingSoon("문의 이메일 연결")}
+            onPress={() => handlers.onContactUs()}
           />
           <SettingItem
             icon={<FileText size={20} color={COLORS.slate.inactive} />}
