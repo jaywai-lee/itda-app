@@ -41,6 +41,7 @@ export interface SettingsViewState {
   reminderDraftTime: Date | null;
   pwModalState: PwModalHook["state"];
   isBudgetModalVisible: boolean;
+  isExportingCSV: boolean;
 }
 
 export interface SettingsViewHandlers {
@@ -61,6 +62,7 @@ export interface SettingsViewHandlers {
   onToggleBudgetModal: (visible: boolean) => void;
   onSelectBudgetThreshold: (threshold: number) => void;
   onContactUs: () => void;
+  onExportCSV: () => void;
 }
 
 interface SettingsViewProps {
@@ -193,8 +195,13 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
         <View className="bg-white border-y border-slate-border mb-6">
           <SettingItem
             icon={<Download size={20} color={COLORS.slate.inactive} />}
-            label="가계부 데이터 내보내기 (CSV)"
-            onPress={() => handlers.onComingSoon("CSV 내보내기")}
+            label={
+              state.isExportingCSV
+                ? "데이터 추출 중..."
+                : "가계부 데이터 내보내기 (CSV)"
+            }
+            onPress={handlers.onExportCSV}
+            disabled={state.isExportingCSV}
             isLast
           />
         </View>

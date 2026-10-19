@@ -5,6 +5,7 @@ import { useChangePasswordModal } from "../auth/useChangePasswordModal";
 import { useUserSettings } from "../auth/useUserSettings";
 import { useBudgetSettings } from "./useBudgetSettings";
 import { useContact } from "./useContact";
+import { useExportCSV } from "./useExportCSV";
 import { useGeneralSettings } from "./useGeneralSettings";
 import { useReminderSettings } from "./useReminderSettings";
 
@@ -16,6 +17,7 @@ export const useSettings = () => {
   const pwModal = useChangePasswordModal();
   const { settings, updateSettings, isUpdating } = useUserSettings();
   const { handleContactUs } = useContact();
+  const { handleExportCSV, isExporting } = useExportCSV();
 
   const general = useGeneralSettings(settings, updateSettings);
   const reminder = useReminderSettings(settings, updateSettings);
@@ -32,6 +34,7 @@ export const useSettings = () => {
       reminderDraftTime: reminder.draftTime,
       pwModalState: pwModal.state,
       isBudgetModalVisible: budget.isBudgetModalVisible,
+      isExportingCSV: isExporting,
     },
     handlers: {
       onGoBack: () => router.back(),
@@ -57,6 +60,7 @@ export const useSettings = () => {
       onDeleteAccount: handleDeleteAccount,
       pwModalHandlers: pwModal.handlers,
       onContactUs: handleContactUs,
+      onExportCSV: handleExportCSV,
     },
   };
 };
