@@ -4,6 +4,7 @@ import { useAuthActions } from "../auth/useAuthActions";
 import { useChangePasswordModal } from "../auth/useChangePasswordModal";
 import { useUserSettings } from "../auth/useUserSettings";
 import { useBudgetSettings } from "./useBudgetSettings";
+import { useContact } from "./useContact";
 import { useGeneralSettings } from "./useGeneralSettings";
 import { useReminderSettings } from "./useReminderSettings";
 
@@ -14,6 +15,7 @@ export const useSettings = () => {
   const { handleLogout, handleDeleteAccount, isDeleting } = useAuthActions();
   const pwModal = useChangePasswordModal();
   const { settings, updateSettings, isUpdating } = useUserSettings();
+  const { handleContactUs } = useContact();
 
   const general = useGeneralSettings(settings, updateSettings);
   const reminder = useReminderSettings(settings, updateSettings);
@@ -54,6 +56,7 @@ export const useSettings = () => {
       onLogout: handleLogout,
       onDeleteAccount: handleDeleteAccount,
       pwModalHandlers: pwModal.handlers,
+      onContactUs: handleContactUs,
     },
   };
 };
