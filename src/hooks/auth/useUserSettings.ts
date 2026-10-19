@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/services/supabase";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Alert } from "react-native";
 
 export const useUserSettings = () => {
@@ -39,15 +39,27 @@ export const useUserSettings = () => {
     }
   };
 
-  return {
-    settings: {
+  const settings = useMemo(
+    () => ({
       defaultCountry,
       defaultCurrency,
       showKrwConversion,
       isReminderEnabled,
       reminderTime,
       budgetWarningThreshold,
-    },
+    }),
+    [
+      defaultCountry,
+      defaultCurrency,
+      showKrwConversion,
+      isReminderEnabled,
+      reminderTime,
+      budgetWarningThreshold,
+    ],
+  );
+
+  return {
+    settings,
     updateSettings,
     isUpdating,
   };

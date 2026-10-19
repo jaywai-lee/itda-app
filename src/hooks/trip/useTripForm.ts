@@ -2,7 +2,7 @@ import { COUNTRIES } from "@/constants/countries";
 import { Trip } from "@/types/database";
 import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { parseISO } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import { useUserSettings } from "../auth/useUserSettings";
 
@@ -18,6 +18,15 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
   const [pickerType, setPickerType] = useState<"start" | "end" | null>(null);
   const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
   const [customExchangeRate, setCustomExchangeRate] = useState<string>("");
+
+  const defaultsRef = useRef({
+    country: COUNTRIES[0].label,
+    currency: COUNTRIES[0].currency,
+  });
+  defaultsRef.current = {
+    country: settings?.defaultCountry ?? COUNTRIES[0].label,
+    currency: settings?.defaultCurrency ?? COUNTRIES[0].currency,
+  };
 
   useEffect(() => {
     if (visible) {
@@ -48,15 +57,15 @@ export const useTripForm = (visible: boolean, editTarget?: Trip | null) => {
         setName("");
         setStartDate(new Date());
         setEndDate(new Date());
-        setCountry(defaultCountry);
-        setCurrency(defaultCurrency);
+        setCountry(defaultsRef.current.country);
+        setCurrency(defaultsRef.current.currency);
         setTotalBudget("");
         setCustomExchangeRate("");
       }
       setPickerType(null);
       setIsCountryPickerOpen(false);
     }
-  }, [visible, editTarget, settings]);
+  }, [visible, editTarget]);
 
   const handleSelectDate = (
     event: DateTimePickerChangeEvent,
