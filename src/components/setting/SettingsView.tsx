@@ -211,7 +211,7 @@ export const SettingsView = ({ state, handlers }: SettingsViewProps) => {
           <SettingItem
             icon={<FileText size={20} color={COLORS.slate.inactive} />}
             label="개인정보처리방침 및 이용약관"
-            onPress={() => handlers.onComingSoon("약관 링크 연결")}
+            onPress={() => handlers.onNavigate("/settings/terms")}
           />
           <SettingItem
             icon={<Info size={20} color={COLORS.slate.inactive} />}
