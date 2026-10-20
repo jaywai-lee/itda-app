@@ -25,18 +25,6 @@ module.exports = {
         sheet: "28px",
         full: "9999px",
       },
-      fontSize: {
-        "large-title": [
-          "34px",
-          { lineHeight: "41px", fontWeight: "700", letterSpacing: "-0.5px" },
-        ],
-        title: ["22px", { lineHeight: "28px", fontWeight: "700" }],
-        headline: ["18px", { lineHeight: "24px", fontWeight: "700" }],
-        body: ["15px", { lineHeight: "22px", fontWeight: "500" }],
-        subhead: ["13px", { lineHeight: "18px", fontWeight: "500" }],
-        caption: ["11px", { lineHeight: "14px", fontWeight: "700" }],
-        button: ["16px", { lineHeight: "20px", fontWeight: "700" }],
-      },
     },
   },
   plugins: [],

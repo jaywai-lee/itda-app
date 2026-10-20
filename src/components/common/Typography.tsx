@@ -1,7 +1,7 @@
 import { cn } from "@/utils/cn";
 import { Text, TextProps } from "react-native";
 
-interface TypegraphyProps extends TextProps {
+interface TypographyProps extends TextProps {
   variant?:
     | "large-title"
     | "title"
@@ -19,15 +19,15 @@ export const Typography = ({
   className,
   style,
   ...props
-}: TypegraphyProps) => {
+}: TypographyProps) => {
   const variantClasses = {
-    "large-title": "text-large-title",
-    title: "text-title",
-    headline: "text-headline",
-    body: "text-body",
-    subhead: "text-subhead",
-    caption: "text-caption",
-    button: "text-button",
+    "large-title": "text-[34px] leading-[41px] font-bold tracking-tight",
+    title: "text-[22px] leading-[28px] font-bold",
+    headline: "text-[18px] leading-[24px] font-bold",
+    body: "text-[15px] leading-[22px] font-medium",
+    subhead: "text-[13px] leading-[18px] font-medium",
+    caption: "text-[11px] leading-[14px] font-bold",
+    button: "text-[16px] leading-[20px] font-bold",
   };
 
   const colorClasses = {
