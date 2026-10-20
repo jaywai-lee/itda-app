@@ -2,6 +2,7 @@ import { Expense, Trip } from "@/types/database";
 import { View } from "react-native";
 import { BudgetProgressBar } from "../account-book/BudgetProgressBar";
 import { CategoryProgressBar } from "../account-book/CategoryProgressBar";
+import { Card } from "../common/Card";
 
 interface TripSummaryCardProps {
   trip: Trip;
@@ -15,7 +16,7 @@ export const TripSummaryCard = ({
   totalSpent,
 }: TripSummaryCardProps) => {
   return (
-    <View className="bg-white rounded-2xl p-4 mb-5 border border-slate-border shadow-sm">
+    <Card className="p-5 mb-6 shadow-sm" pressEffect="none">
       <BudgetProgressBar
         totalBudget={trip.total_budget}
         totalSpent={totalSpent}
@@ -23,10 +24,10 @@ export const TripSummaryCard = ({
       />
 
       {expenses && expenses.length > 0 && (
-        <View className="py-3">
+        <View className="pt-5 mt-5 border-t border-line">
           <CategoryProgressBar expenses={expenses} />
         </View>
       )}
-    </View>
+    </Card>
   );
 };

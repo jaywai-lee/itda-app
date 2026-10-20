@@ -13,6 +13,7 @@ import {
   Alert,
   FlatList,
   GestureResponderEvent,
+  Pressable,
   View,
 } from "react-native";
 
@@ -63,24 +64,11 @@ export default function AccountBookScreen() {
     );
   }
 
-  return (
-    <View className="flex-1 bg-canvas px-5 pt-4 pb-0">
-      <View className="flex-row justify-end items-center mb-6">
-        <Button
-          variant="solid"
-          onPress={handleOpenCreateModal}
-          className="py-2.5 px-4 shadow-sm"
-        >
-          <View className="flex-row gap-2">
-            <Plus size={18} color="#FFFFFF" strokeWidth={3} />
-            <Typography variant="subhead" color="white">
-              새 여행
-            </Typography>
-          </View>
-        </Button>
-      </View>
+  const hasTrips = !!trips && trips.length > 0;
 
-      {!trips || trips.length === 0 ? (
+  return (
+    <View className="flex-1 bg-canvas px-5 pt-5 relative">
+      {!hasTrips ? (
         <View className="flex-1 justify-center items-center pb-20">
           <View className="bg-surface rounded-card p-8 border border-line items-center w-full max-w-sm shadow-sm">
             <View className="w-16 h-16 bg-fill-strong rounded-full items-center justify-center mb-5">
@@ -102,19 +90,38 @@ export default function AccountBookScreen() {
           </View>
         </View>
       ) : (
-        <FlatList
-          data={trips}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 30 }}
-          renderItem={({ item }) => (
-            <TripListItem
-              item={item}
-              onEdit={handleOpenEditModal}
-              onDelete={handleDeleteTrip}
-            />
-          )}
-        />
+        <>
+          <FlatList
+            data={trips}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingTop: 8, paddingBottom: 100 }}
+            renderItem={({ item }) => (
+              <TripListItem
+                item={item}
+                onEdit={handleOpenEditModal}
+                onDelete={handleDeleteTrip}
+              />
+            )}
+          />
+
+          {/* 💡 화면 우측 하단 Floating Action Button (FAB) */}
+          <Pressable
+            onPress={handleOpenCreateModal}
+            accessibilityRole="button"
+            accessibilityLabel="새 여행 추가"
+            className="absolute bottom-8 right-5 w-14 h-14 rounded-full bg-primary items-center justify-center shadow-lg active:scale-95"
+            style={{
+              elevation: 5,
+              shadowColor: COLORS.primary.DEFAULT,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.35,
+              shadowRadius: 8,
+            }}
+          >
+            <Plus size={26} color="#FFFFFF" strokeWidth={2.5} />
+          </Pressable>
+        </>
       )}
 
       <CreateTripModal

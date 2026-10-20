@@ -2,8 +2,10 @@ import { COLORS } from "@/constants/colors";
 import { Expense } from "@/types/database";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { MapPin } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { View } from "react-native";
+import { Card } from "../common/Card";
 import { CategoryIcon } from "../common/CategoryIcon";
+import { Typography } from "../common/Typography";
 
 interface ExpenseListItemProps {
   item: Expense;
@@ -27,20 +29,21 @@ export const ExpenseListItem = ({
   const categoryColor = item.categories?.color || COLORS.slate.inactive;
 
   return (
-    <Pressable
+    <Card
       onPress={() => onPress(item)}
-      className="bg-white p-4 rounded-xl border border-slate-border mb-3 flex-row justify-between items-center active:opacity-75"
+      className="p-4 mb-3 flex-row justify-between items-center"
+      pressEffect="scale"
     >
       <View className="flex-1 pr-4">
-        <View className="mb-1.5 flex-row items-center">
-          <Text className="text-xs font-bold text-primary mr-1">
+        <View className="mb-2 flex-row items-center">
+          <Typography variant="caption" color="primary">
             {displayDay}
-          </Text>
+          </Typography>
         </View>
 
-        <View className="flex-row items-center mb-1">
+        <View className="flex-row items-center mb-1.5">
           <View
-            className="w-6 h-6 rounded-full items-center justify-center mr-2"
+            className="w-7 h-7 rounded-full items-center justify-center mr-2.5"
             style={{ backgroundColor: `${categoryColor}20` }}
           >
             <CategoryIcon
@@ -49,44 +52,46 @@ export const ExpenseListItem = ({
               size={14}
             />
           </View>
-          <Text className="text-sm font-bold text-slate-text mr-2">
+          <Typography variant="body" className="font-bold mr-2.5">
             {item.categories?.name || "기타"}
-          </Text>
+          </Typography>
 
           {item.itinerary_id && (
-            <View className="bg-primary/10 px-1.5 py-0.5 rounded flex-row items-center max-w-[130px]">
-              <MapPin size={10} color={COLORS.primary.DEFAULT} />
-              <Text
-                className="text-[10px] font-semibold text-primary ml-0.5"
+            <View className="bg-fill-strong px-2 py-1 rounded-chip flex-row items-center max-w-[130px]">
+              <MapPin size={10} color={COLORS.ink.sub} />
+              <Typography
+                variant="caption"
+                color="sub"
+                className="ml-1"
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
                 {item.itineraries?.place_name ||
                   item.itineraries?.title ||
                   "일정 연동"}
-              </Text>
+              </Typography>
             </View>
           )}
         </View>
         {item.memo && (
-          <Text className="text-xs text-slate-inactive" numberOfLines={1}>
+          <Typography variant="subhead" color="sub" numberOfLines={1}>
             {item.memo}
-          </Text>
+          </Typography>
         )}
       </View>
 
       <View className="items-end">
-        <Text className="text-base font-bold text-slate-text">
+        <Typography variant="button">
           {item.amount.toLocaleString()} {item.currency}
-        </Text>
+        </Typography>
         {showKrwConversion &&
           item.currency !== "KRW" &&
           item.amount_krw != null && (
-            <Text className="text-xs text-slate-inactive mt-0.5">
+            <Typography variant="caption" color="sub" className="mt-1">
               ≈ {item.amount_krw.toLocaleString()} KRW
-            </Text>
+            </Typography>
           )}
       </View>
-    </Pressable>
+    </Card>
   );
 };

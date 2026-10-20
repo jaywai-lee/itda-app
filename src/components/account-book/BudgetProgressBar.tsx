@@ -1,5 +1,6 @@
 import { cn } from "@/utils/cn";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Typography } from "../common/Typography";
 
 interface BudgetProgressBarProps {
   totalBudget: number;
@@ -17,39 +18,32 @@ export const BudgetProgressBar = ({
     totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
   const safePercentage = Math.min(spentPercentage, 100);
 
-  let statusColorClass = "bg-budget-safe";
-  if (spentPercentage >= 100) {
-    statusColorClass = "bg-budget-danger";
-  } else if (spentPercentage >= 80) {
-    statusColorClass = "bg-budget-warning";
-  }
-
   return (
-    <View className="w-full pt-3">
-      <View className="flex-row justify-between mb-2">
+    <View className="w-full">
+      <View className="flex-row justify-between mb-3">
         <View>
-          <Text className="text-xs text-slate-inactive mb-0.5">사용 금액</Text>
-          <Text className="text-sm font-bold text-slate-text">
+          <Typography variant="caption" color="sub" className="mb-1">
+            사용 금액
+          </Typography>
+          <Typography variant="headline">
             {totalSpent.toLocaleString()} {currency}
-          </Text>
+          </Typography>
         </View>
 
         <View className="items-end">
-          <Text className="text-xs text-slate-inactive mb-0.5">
+          <Typography variant="caption" color="sub" className="mb-1">
             남은 예산 (총 {totalBudget.toLocaleString()})
-          </Text>
-          <Text
-            className={cn(
-              "text-sm font-bold",
-              balance < 0 ? "text-budget-danger" : "text-primary",
-            )}
+          </Typography>
+          <Typography
+            variant="headline"
+            color={balance < 0 ? "danger" : "primary"}
           >
             {balance.toLocaleString()} {currency}
-          </Text>
+          </Typography>
         </View>
       </View>
 
-      <View className="w-full h-2.5 bg-slate-border rounded-full overflow-hidden">
+      <View className="w-full h-3 bg-fill rounded-full overflow-hidden">
         <View
           className={cn(
             "h-full rounded-full bg-budget-safe",
@@ -61,9 +55,13 @@ export const BudgetProgressBar = ({
       </View>
 
       {spentPercentage > 100 && (
-        <Text className="text-xs text-budget-danger mt-1.5 font-semibold text-right">
+        <Typography
+          variant="caption"
+          color="danger"
+          className="mt-2 font-semibold text-right"
+        >
           예산을 초과했습니다!
-        </Text>
+        </Typography>
       )}
     </View>
   );
