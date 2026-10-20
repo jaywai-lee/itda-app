@@ -26,7 +26,7 @@ export const TripListItem = ({ item, onDelete, onEdit }: TripListItemProps) => {
           params: { id: item.id },
         })
       }
-      className="bg-white rounded-2xl p-4 mb-3 border border-slate-border shadow-sm active:opacity-70"
+      className="bg-white rounded-3xl p-5 mb-4 border border-slate-BORDER/60 shadow-sm active:opacity-75"
     >
       <View className="flex-row justify-between items-start mb-1">
         <Text className="text-lg font-bold text-slate-text flex-1">

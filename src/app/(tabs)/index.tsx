@@ -4,7 +4,7 @@ import { COLORS } from "@/constants/colors";
 import { useDeleteTrip } from "@/hooks/trip/useDeleteTrip";
 import { useTrips } from "@/hooks/trip/useTrips";
 import { Trip } from "@/types/database";
-import { Plus } from "lucide-react-native";
+import { Plane, Plus } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -64,35 +64,39 @@ export default function AccountBookScreen() {
   }
 
   return (
-    <View className="flex-1 bg-slate-bg p-4">
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-bold text-slate-text">내 여행 목록</Text>
+    <View className="flex-1 bg-slate-bg px-5 pt-2 pb-4">
+      <View className="flex-row justify-between items-center mb-6">
         <Pressable
           onPress={handleOpenCreateModal}
-          className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
+          className="bg-primary flex-row items-center px-4 py-2.5 rounded-full active:opacity-80 shadow-sm"
         >
-          <Plus size={18} color="#FFFFFF" />
-          <Text className="text-white font-semibold ml-1 text-xs">
-            여행 추가
-          </Text>
+          <Plus size={18} color="#FFFFFF" strokeWidth={3} />
+          <Text className="text-white font-bold ml-1 text-sm">새 여행</Text>
         </Pressable>
       </View>
 
       {!trips || trips.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
-          <View className="bg-white rounded-2xl p-6 border border-slate-border items-center w-full max-w-sm shadow-sm">
-            <Text className="text-base font-semibold text-slate-text mb-1">
-              등록된 여행이 없습니다.
+        <View className="flex-1 justify-center items-center pb-20">
+          <View className="bg-white rounded-3xl p-8 border border-slate-border/60 items-center w-full max-w-sm shadow-sm">
+            <View className="w-16 h-16 bg-slate-50 rounded-full items-center justify-center mb-4 border border-slate-100">
+              <Plane
+                size={32}
+                color={COLORS.slate.inactive}
+                strokeWidth={1.5}
+              />
+            </View>
+            <Text className="text-lg font-bold text-slate-text mb-2">
+              기록된 여행이 없어요
             </Text>
-            <Text className="text-xs text-slate-inactive mb-4">
-              새로운 여행을 등록하고 가계부를 시작해 보세요!
+            <Text className="text-sm text-slate-inactive mb-6 text-center leading-relaxed">
+              새로운 여행을 추가하고{"\n"}예산과 지출을 꼼꼼히 관리해 보세요.
             </Text>
             <Pressable
               onPress={handleOpenCreateModal}
-              className="bg-primary px-4 py-2 rounded-xl active:opacity-80"
+              className="bg-primary px-6 py-3.5 rounded-full active:opacity-80 shadow-sm"
             >
-              <Text className="text-white text-xs font-semibold">
-                첫 여행 생성하기
+              <Text className="text-white text-sm font-bold">
+                첫 여행 시작하기
               </Text>
             </Pressable>
           </View>
@@ -101,6 +105,8 @@ export default function AccountBookScreen() {
         <FlatList
           data={trips}
           keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
           renderItem={({ item }) => (
             <TripListItem
               item={item}

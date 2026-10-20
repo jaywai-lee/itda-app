@@ -27,19 +27,36 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: COLORS.primary.DEFAULT,
         tabBarInactiveTintColor: COLORS.slate.inactive,
+        // 💡 탭바 디자인 고도화: 테두리 제거 및 부드러운 그림자 추가
         tabBarStyle: {
-          borderTopWidth: 1,
-          borderTopColor: COLORS.slate.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          borderTopWidth: 0,
+          elevation: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 6,
+          backgroundColor: "#FFFFFF",
+          height: 85,
+          paddingBottom: 10,
+          paddingTop: 10,
+        },
+        headerStyle: {
+          backgroundColor: COLORS.slate.bg,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+        },
+        headerTitleStyle: {
+          fontWeight: "700",
+          fontSize: 17,
+          color: COLORS.slate.text,
         },
         headerRight: () => (
           <Pressable
             onPress={handleOpenSettings}
-            className="mr-4 p-1 active:opacity-70"
+            className="mr-5 p-2 active:opacity-60 bg-white rounded-full border border-slate-border shadow-sm"
           >
-            <Settings size={22} color={COLORS.slate.text} />
+            <Settings size={20} color={COLORS.slate.text} />
           </Pressable>
         ),
       }}
