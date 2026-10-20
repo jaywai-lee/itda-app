@@ -8,8 +8,10 @@ import {
   Trash2,
   Wallet,
 } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { ScaleDecorator } from "react-native-draggable-flatlist";
+import { Card } from "../common/Card";
+import { Typography } from "../common/Typography";
 
 interface ItineraryListItemProps {
   item: Itinerary;
@@ -38,79 +40,82 @@ export const ItineraryListItem = ({
 }: ItineraryListItemProps) => {
   return (
     <ScaleDecorator>
-      <View className="flex-row mb-3 pl-2">
-        <View className="items-center mr-3 mt-1.5">
-          <View className="w-3 h-3 rounded-full bg-primary" />
-          {!isLast && <View className="w-0.5 flex-1 bg-slate-border mt-1" />}
+      <View className="flex-row pb-5 pr-1">
+        <View className="items-center w-5 mr-3 relative">
+          <View className="w-2.5 h-2.5 rounded-full bg-ink mt-[26px] z-10" />
+          {!isLast && (
+            <View className="absolute top-[34px] bottom-0 w-[2px] bg-line z-0" />
+          )}
         </View>
 
-        <View
+        <Card
           className={cn(
-            "flex-1 bg-white p-3.5 rounded-xl border flex-row justify-between items-center",
-            isActive
-              ? "border-primary shadow-md"
-              : "border-slate-border shadow-sm",
+            "flex-1 flex-row items-center p-4 mb-0",
+            isActive && "border-ink shadow-md opacity-90",
           )}
+          pressEffect="none"
         >
           <Pressable
             onLongPress={drag}
             delayLongPress={150}
-            className="mr-2 p-1 py-2 active:opacity-60"
+            className="mr-2.5 p-1.5 active:opacity-60"
           >
-            <GripVertical size={16} color={COLORS.slate.inactive} />
+            <GripVertical size={16} color={COLORS.ink.mute} />
           </Pressable>
 
           <View className="flex-1 pr-3">
             <View className="flex-row items-center mb-1">
-              <MapPin
-                size={12}
-                color={COLORS.primary.DEFAULT}
-                className="mr-1"
-              />
-              <Text className="font-bold ml-1 text-slate-text">
+              <MapPin size={12} color={COLORS.ink.DEFAULT} />
+              <Typography
+                variant="body"
+                className="font-bold flex-1 ml-2"
+                numberOfLines={1}
+              >
                 {item.place_name}
-              </Text>
+              </Typography>
             </View>
             {item.memo && (
-              <Text
-                className="text-xs text-slate-inactive mt-1 ml-5"
+              <Typography
+                variant="subhead"
+                color="sub"
                 numberOfLines={2}
+                className="ml-5"
               >
                 {item.memo}
-              </Text>
+              </Typography>
             )}
 
             {linkedExpensesSum > 0 && (
-              <View className="flex-row items-center mt-2 ml-4 bg-slate-bg self-start px-2 py-1 rounded-md">
-                <Wallet size={12} color={COLORS.slate.inactive as string} />
-                <Text className="text-xs font-semibold text-slate-text ml-1">
+              <View className="flex-row items-center mt-2.5 ml-4 bg-fill-strong self-start px-2 py-1 rounded-chip">
+                <Wallet size={12} color={COLORS.ink.sub} />
+                <Typography variant="caption" color="sub" className="ml-1.5">
                   {linkedExpensesSum.toLocaleString()} {currency}
-                </Text>
+                </Typography>
               </View>
             )}
           </View>
 
-          <View className="flex-row gap-2">
+          <View className="flex-row gap-1.5">
             <Pressable
               onPress={() => onAddExpense(item.id)}
-              className="p-1 active:opacity-60"
+              className="p-2 rounded-full bg-primary/10 active:opacity-60"
             >
-              <Wallet size={18} color={COLORS.primary.DEFAULT} />
+              <Wallet size={14} color={COLORS.primary.DEFAULT} />
             </Pressable>
             <Pressable
               onPress={() => onEdit(item)}
-              className="p-1 active:opacity-60"
+              className="p-2 rounded-full bg-fill active:bg-fill-strong"
             >
-              <Pencil size={18} color={COLORS.slate.inactive} />
+              <Pencil size={14} color={COLORS.ink.sub} />
             </Pressable>
             <Pressable
               onPress={() => onDelete(item.id)}
-              className="p-1 active:opacity-60"
+              className="p-2 rounded-full bg-danger-soft active:opacity-70"
             >
-              <Trash2 size={18} color={COLORS.budget.danger} />
+              <Trash2 size={14} color={COLORS.budget.danger} />
             </Pressable>
           </View>
-        </View>
+        </Card>
       </View>
     </ScaleDecorator>
   );

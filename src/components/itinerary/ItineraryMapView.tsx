@@ -1,7 +1,8 @@
 import { Itinerary } from "@/types/database";
 import { useEffect, useRef } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { Typography } from "../common/Typography";
 
 interface ItineraryMapViewProps {
   itineraries: Itinerary[];
@@ -74,10 +75,10 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
             description={item.memo || ""}
           >
             <View className="items-center justify-center">
-              <View className="bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white shadow-md">
-                <Text className="text-white font-bold text-xs">
-                  {index + 1}
-                </Text>
+              <View className="bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-surface shadow-md">
+                <Typography variant="caption" color="white">
+                  {(index + 1).toString()}
+                </Typography>
               </View>
               <View className="w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-primary -mt-[1px]" />
             </View>

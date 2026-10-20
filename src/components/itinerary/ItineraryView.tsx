@@ -1,14 +1,12 @@
 import { COLORS } from "@/constants/colors";
 import { Expense, Itinerary, Trip } from "@/types/database";
 import { TripDay } from "@/utils/dateUtils";
-import { Plus } from "lucide-react-native";
+import { MapPin, Plus } from "lucide-react-native";
 import { useCallback } from "react";
 import {
   ActivityIndicator,
   LayoutChangeEvent,
-  Pressable,
   StyleProp,
-  Text,
   View,
   ViewStyle,
 } from "react-native";
@@ -18,6 +16,8 @@ import DraggableFlatList, {
 import type { PanGesture } from "react-native-gesture-handler";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { Button } from "../common/Button";
+import { Typography } from "../common/Typography";
 import { CreateExpenseModal } from "../expense/CreateExpenseModal";
 import { AddPlaceModal } from "./AddPlaceModal";
 import { DaySelector } from "./DaySelector";
@@ -102,7 +102,7 @@ export const ItineraryView = ({
     (state.trips && state.trips.length > 0 && !state.selectedTripId)
   ) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-bg">
+      <View className="flex-1 justify-center items-center bg-canvas">
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </View>
     );
@@ -110,19 +110,19 @@ export const ItineraryView = ({
 
   if (!state.trips || state.trips.length === 0) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-bg p-4">
-        <Text className="text-base font-semibold text-slate-text mb-1">
+      <View className="flex-1 justify-center items-center bg-canvas p-5">
+        <Typography variant="headline" className="mb-2">
           등록된 여행이 없습니다.
-        </Text>
-        <Text className="text-sm text-slate-inactive">
+        </Typography>
+        <Typography variant="body" color="sub">
           가계부 탭에서 여행을 먼저 생성해 주세요.
-        </Text>
+        </Typography>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-slate-bg">
+    <View className="flex-1 bg-canvas">
       <TripSelector
         trips={state.trips}
         selectedTripId={state.selectedTripId}
@@ -141,30 +141,31 @@ export const ItineraryView = ({
         {state.isMeasured && (
           <Animated.View
             style={state.sheetStyle}
-            className="absolute bottom-0 left-0 right-0 bg-slate-bg shadow-2xl border-t border-slate-border"
+            className="absolute bottom-0 left-0 right-0 bg-surface shadow-2xl border-t border-line rounded-t-sheet"
           >
             <GestureDetector gesture={panGesture}>
               <View
                 onLayout={handlers.onHandleLayout}
-                className="w-full pt-3 pb-2.5 items-center bg-transparent z-10"
+                className="w-full pt-4 pb-3 items-center bg-transparent z-10"
               >
-                <View className="w-12 h-1.5 bg-slate-300 rounded-full" />
+                <View className="w-12 h-1.5 bg-line rounded-full" />
               </View>
             </GestureDetector>
 
-            <View className="flex-row justify-between px-4 pb-4 items-center">
-              <Text className="text-lg font-bold text-slate-text">
-                상세 일정
-              </Text>
-              <Pressable
+            <View className="flex-row justify-between px-5 pb-5 items-center">
+              <Typography variant="headline">상세 일정</Typography>
+              <Button
+                variant="solid"
                 onPress={handlers.onOpenCreateModal}
-                className="bg-primary flex-row items-center px-3 py-2 rounded-xl active:opacity-80"
+                className="py-2.5 px-4 shadow-sm"
               >
-                <Plus size={16} color="#FFFFFF" />
-                <Text className="text-white font-semibold ml-1 text-xs">
-                  장소 추가
-                </Text>
-              </Pressable>
+                <View className="flex-row items-center justify-center gap-2">
+                  <Plus size={16} color="#FFFFFF" strokeWidth={3} />
+                  <Typography variant="subhead" color="white">
+                    장소 추가
+                  </Typography>
+                </View>
+              </Button>
             </View>
 
             {state.isItinerariesLoading ? (
@@ -174,10 +175,26 @@ export const ItineraryView = ({
                 className="mt-4"
               />
             ) : state.localItineraries.length === 0 ? (
-              <View className="flex-1 justify-center items-center">
-                <Text className="text-slate-inactive text-sm">
-                  아직 등록된 일정이 없습니다.
-                </Text>
+              <View className="justify-center items-center pb-20">
+                <View className="bg-surface rounded-card p-8 border border-line items-center w-full max-w-sm shadow-sm mx-5">
+                  <View className="w-16 h-16 bg-fill-strong rounded-full items-center justify-center mb-5">
+                    <MapPin
+                      size={32}
+                      color={COLORS.ink.mute}
+                      strokeWidth={1.5}
+                    />
+                  </View>
+                  <Typography variant="headline" className="mb-2">
+                    등록된 장소가 없어요
+                  </Typography>
+                  <Typography
+                    variant="body"
+                    color="sub"
+                    className="text-center"
+                  >
+                    우측 상단의 추가 버튼을 눌러{"\n"}상세 일정을 구성해 보세요.
+                  </Typography>
+                </View>
               </View>
             ) : (
               <View style={{ flex: 1 }}>
@@ -186,7 +203,7 @@ export const ItineraryView = ({
                   keyExtractor={(item) => item.id}
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{
-                    paddingHorizontal: 16,
+                    paddingHorizontal: 20,
                     paddingBottom: 100,
                   }}
                   onDragEnd={handlers.onDragEnd}
