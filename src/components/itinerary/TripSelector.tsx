@@ -14,10 +14,12 @@ export const TripSelector = ({
   onSelectTrip,
 }: TripSelectorProps) => {
   return (
-    <View className="bg-surface pt-14 pb-3 border-b border-line z-10 shadow-sm">
+    <View className="bg-surface pt-3 pb-3 border-b border-line z-10 shadow-sm">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        alwaysBounceVertical={false}
+        directionalLockEnabled={true}
         contentContainerStyle={{ paddingHorizontal: 20, gap: 8 }}
       >
         {trips.map((trip) => (

@@ -1,11 +1,14 @@
+import { TabHeader } from "@/components/common/TabHeader";
 import { COLORS } from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
 import { Redirect, router, Tabs } from "expo-router";
-import { Calendar, Settings, User, Wallet } from "lucide-react-native";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { Calendar, User, Wallet } from "lucide-react-native";
+import { ActivityIndicator, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const { session, loading } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const handleOpenSettings = () => {
     router.push("/settings");
@@ -13,7 +16,7 @@ export default function TabLayout() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-bg">
+      <View className="flex-1 justify-center items-center bg-canvas">
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </View>
     );
@@ -22,12 +25,27 @@ export default function TabLayout() {
   if (!session) {
     return <Redirect href={"/login"} />;
   }
+
   return (
     <Tabs
       screenOptions={{
+        header: ({ options, route }) => (
+          <TabHeader
+            title={
+              typeof options.headerTitle === "string"
+                ? options.headerTitle
+                : (options.title ?? route.name)
+            }
+            icon={options.tabBarIcon?.({
+              focused: true,
+              color: COLORS.primary.DEFAULT,
+              size: 20,
+            })}
+            onPressSettings={handleOpenSettings}
+          />
+        ),
         tabBarActiveTintColor: COLORS.primary.DEFAULT,
         tabBarInactiveTintColor: COLORS.slate.inactive,
-        // 💡 탭바 디자인 고도화: 테두리 제거 및 부드러운 그림자 추가
         tabBarStyle: {
           borderTopWidth: 0,
           elevation: 10,
@@ -36,29 +54,10 @@ export default function TabLayout() {
           shadowOpacity: 0.05,
           shadowRadius: 6,
           backgroundColor: "#FFFFFF",
-          height: 85,
-          paddingBottom: 10,
-          paddingTop: 10,
+          height: 56 + insets.bottom,
+          paddingTop: 8,
+          paddingBottom: insets.bottom,
         },
-        headerStyle: {
-          backgroundColor: COLORS.slate.bg,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0,
-        },
-        headerTitleStyle: {
-          fontWeight: "700",
-          fontSize: 17,
-          color: COLORS.slate.text,
-        },
-        headerRight: () => (
-          <Pressable
-            onPress={handleOpenSettings}
-            className="mr-5 p-2 active:opacity-60 bg-white rounded-full border border-slate-border shadow-sm"
-          >
-            <Settings size={20} color={COLORS.slate.text} />
-          </Pressable>
-        ),
       }}
     >
       <Tabs.Screen
