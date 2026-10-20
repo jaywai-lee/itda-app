@@ -1,3 +1,5 @@
+import { Button } from "@/components/common/Button";
+import { Typography } from "@/components/common/Typography";
 import { CreateTripModal } from "@/components/trip/CreateTripModal";
 import { TripListItem } from "@/components/trip/TripListItem";
 import { COLORS } from "@/constants/colors";
@@ -11,8 +13,6 @@ import {
   Alert,
   FlatList,
   GestureResponderEvent,
-  Pressable,
-  Text,
   View,
 } from "react-native";
 
@@ -57,48 +57,48 @@ export default function AccountBookScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-bg">
+      <View className="flex-1 justify-center items-center bg-canvas">
         <ActivityIndicator size="large" color={COLORS.primary.DEFAULT} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-slate-bg px-5 pt-2 pb-4">
-      <View className="flex-row justify-between items-center mb-6">
-        <Pressable
+    <View className="flex-1 bg-canvas px-5 pt-4 pb-0">
+      <View className="flex-row justify-end items-center mb-6">
+        <Button
+          variant="solid"
           onPress={handleOpenCreateModal}
-          className="bg-primary flex-row items-center px-4 py-2.5 rounded-full active:opacity-80 shadow-sm"
+          className="py-2.5 px-4 shadow-sm"
         >
-          <Plus size={18} color="#FFFFFF" strokeWidth={3} />
-          <Text className="text-white font-bold ml-1 text-sm">새 여행</Text>
-        </Pressable>
+          <View className="flex-row gap-2">
+            <Plus size={18} color="#FFFFFF" strokeWidth={3} />
+            <Typography variant="subhead" color="white">
+              새 여행
+            </Typography>
+          </View>
+        </Button>
       </View>
 
       {!trips || trips.length === 0 ? (
         <View className="flex-1 justify-center items-center pb-20">
-          <View className="bg-white rounded-3xl p-8 border border-slate-border/60 items-center w-full max-w-sm shadow-sm">
-            <View className="w-16 h-16 bg-slate-50 rounded-full items-center justify-center mb-4 border border-slate-100">
-              <Plane
-                size={32}
-                color={COLORS.slate.inactive}
-                strokeWidth={1.5}
-              />
+          <View className="bg-surface rounded-card p-8 border border-line items-center w-full max-w-sm shadow-sm">
+            <View className="w-16 h-16 bg-fill-strong rounded-full items-center justify-center mb-5">
+              <Plane size={32} color={COLORS.ink.mute} strokeWidth={1.5} />
             </View>
-            <Text className="text-lg font-bold text-slate-text mb-2">
+            <Typography variant="headline" className="mb-2">
               기록된 여행이 없어요
-            </Text>
-            <Text className="text-sm text-slate-inactive mb-6 text-center leading-relaxed">
+            </Typography>
+            <Typography variant="body" color="sub" className="mb-6 text-center">
               새로운 여행을 추가하고{"\n"}예산과 지출을 꼼꼼히 관리해 보세요.
-            </Text>
-            <Pressable
+            </Typography>
+            <Button
+              variant="solid"
               onPress={handleOpenCreateModal}
-              className="bg-primary px-6 py-3.5 rounded-full active:opacity-80 shadow-sm"
+              className="w-full"
             >
-              <Text className="text-white text-sm font-bold">
-                첫 여행 시작하기
-              </Text>
-            </Pressable>
+              첫 여행 시작하기
+            </Button>
           </View>
         </View>
       ) : (
@@ -106,7 +106,7 @@ export default function AccountBookScreen() {
           data={trips}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 30 }}
           renderItem={({ item }) => (
             <TripListItem
               item={item}

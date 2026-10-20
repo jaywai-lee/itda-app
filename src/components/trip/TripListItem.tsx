@@ -1,10 +1,12 @@
-import { COLORS } from "@/constants/colors";
 import { useExpenses } from "@/hooks/expense/useExpenses";
 import { Trip } from "@/types/database";
 import { useRouter } from "expo-router";
-import { Calendar, Pencil, Trash2 } from "lucide-react-native";
-import { GestureResponderEvent, Pressable, Text, View } from "react-native";
+import { Pencil, Trash2 } from "lucide-react-native";
+import { GestureResponderEvent, Pressable, View } from "react-native";
 import { BudgetProgressBar } from "../account-book/BudgetProgressBar";
+import { Card } from "../common/Card";
+import { Chip } from "../common/Chip";
+import { Typography } from "../common/Typography";
 
 interface TripListItemProps {
   item: Trip;
@@ -19,40 +21,48 @@ export const TripListItem = ({ item, onDelete, onEdit }: TripListItemProps) => {
   const totalSpent = expenses?.reduce((acc, cur) => acc + cur.amount, 0) || 0;
 
   return (
-    <Pressable
+    <Card
       onPress={() =>
         router.push({
           pathname: "/trip/[id]",
           params: { id: item.id },
         })
       }
-      className="bg-white rounded-3xl p-5 mb-4 border border-slate-BORDER/60 shadow-sm active:opacity-75"
+      className="mb-4"
     >
-      <View className="flex-row justify-between items-start mb-1">
-        <Text className="text-lg font-bold text-slate-text flex-1">
+      <View className="flex-row justify-between items-center mb-3">
+        <Typography
+          variant="headline"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          className="flex-1 mr-3"
+        >
           {item.name}
-        </Text>
-        <View className="flex-row items-center gap-2">
+        </Typography>
+
+        <View className="flex-row items-center gap-1.5">
           <Pressable
             onPress={(e) => onEdit(item, e)}
-            className="p-1 active:opacity-70"
+            className="p-2.5 rounded-full bg-fill border border-line active:opacity-60"
+            hitSlop={8}
           >
-            <Pencil size={18} color={COLORS.slate.inactive} />
+            <Pencil size={14} color="#64748B" />
           </Pressable>
           <Pressable
             onPress={(e) => onDelete(item.id, e)}
-            className="p-1 active:opacity-70"
+            className="p-2.5 rounded-full bg-danger-soft border border-transparent active:opacity-60"
+            hitSlop={8}
           >
-            <Trash2 size={18} color={COLORS.budget.danger} />
+            <Trash2 size={14} color="#EF4444" />
           </Pressable>
         </View>
       </View>
 
-      <View className="flex-row items-center mb-2">
-        <Calendar size={14} color={COLORS.slate.inactive} />
-        <Text className="text-xs text-slate-inactive ml-1">
-          {item.start_date} ~ {item.end_date}
-        </Text>
+      <View className="flex-row items-center mb-4">
+        <Chip
+          label={`${item.start_date} ~ ${item.end_date}`}
+          variant="default"
+        />
       </View>
 
       <BudgetProgressBar
@@ -60,6 +70,6 @@ export const TripListItem = ({ item, onDelete, onEdit }: TripListItemProps) => {
         totalSpent={totalSpent}
         currency={item.currency}
       />
-    </Pressable>
+    </Card>
   );
 };
