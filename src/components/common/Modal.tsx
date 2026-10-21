@@ -1,3 +1,5 @@
+import { Typography } from "@/components/common/Typography";
+import { COLORS } from "@/constants/colors";
 import { X } from "lucide-react-native";
 import React, { createContext, useContext, useEffect } from "react";
 import {
@@ -7,7 +9,6 @@ import {
   Pressable,
   Modal as RNModal,
   ModalProps as RNModalProps,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -23,7 +24,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import { COLORS } from "../../constants/colors";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CLOSE_DISTANCE = 120;
@@ -144,11 +144,11 @@ export const Modal = ({ visible, onClose, children, ...props }: ModalProps) => {
 
             <Animated.View
               style={sheetStyle}
-              className="bg-white rounded-t-3xl px-6 pb-6 border-t border-slate-border"
+              className="bg-surface rounded-t-[32px] px-6 pb-6 border-t border-line shadow-lg"
             >
               <GestureDetector gesture={panGesture}>
                 <View className="w-full items-center pt-3 pb-5 active:opacity-60">
-                  <View className="w-12 h-1.5 bg-slate-inactive/40 rounded-full" />
+                  <View className="w-12 h-1.5 bg-line rounded-full" />
                 </View>
               </GestureDetector>
 
@@ -172,10 +172,16 @@ const Header = ({ title, showCloseButton = true }: HeaderProps) => {
   const { onClose } = useModalContext();
   return (
     <View className="flex-row justify-between items-center mb-6">
-      <Text className="text-xl font-bold text-slate-text">{title}</Text>
+      <Typography variant="headline" className="font-bold">
+        {title}
+      </Typography>
       {showCloseButton && (
-        <Pressable onPress={onClose} className="p-1 active:opacity-70">
-          <X size={24} color={COLORS.slate.text} />
+        <Pressable
+          onPress={onClose}
+          className="p-2 rounded-full bg-fill active:bg-fill-strong active:scale-95"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <X size={20} color={COLORS.ink.DEFAULT} />
         </Pressable>
       )}
     </View>

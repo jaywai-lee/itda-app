@@ -1,6 +1,7 @@
 import { COUNTRIES } from "@/constants/countries";
-import { Pressable, ScrollView, Text } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { Modal } from "../common/Modal";
+import { Typography } from "../common/Typography";
 
 interface CountrySelectModalProps {
   visible: boolean;
@@ -25,40 +26,38 @@ export const CountrySelectModal = ({
           className="max-h-[60vh]"
           showsVerticalScrollIndicator={false}
         >
-          {COUNTRIES.map((item, index) => {
-            const isSelected = currentCountry === item.label;
-            return (
-              <Pressable
-                key={item.currency}
-                disabled={isUpdating}
-                onPress={() => {
-                  onSelect(item.label, item.currency);
-                }}
-                className={`p-4 flex-row justify-between items-center active:bg-slate-50 ${
-                  index !== COUNTRIES.length - 1
-                    ? "border-b border-slate-border"
-                    : ""
-                }`}
-              >
-                <Text
-                  className={`text-base ${
-                    isSelected ? "font-bold text-primary" : "text-slate-text"
+          <View className="bg-surface rounded-2xl overflow-hidden border border-line">
+            {COUNTRIES.map((item, index) => {
+              const isSelected = currentCountry === item.label;
+              return (
+                <Pressable
+                  key={item.currency}
+                  disabled={isUpdating}
+                  onPress={() => {
+                    onSelect(item.label, item.currency);
+                  }}
+                  className={`p-4 flex-row justify-between items-center bg-surface active:bg-fill transition-all ${
+                    index !== COUNTRIES.length - 1 ? "border-b border-line" : ""
                   }`}
                 >
-                  {item.label}
-                </Text>
-                <Text
-                  className={`text-sm ${
-                    isSelected
-                      ? "font-bold text-primary"
-                      : "text-slate-inactive"
-                  }`}
-                >
-                  {item.currency}
-                </Text>
-              </Pressable>
-            );
-          })}
+                  <Typography
+                    className={`text-base ${
+                      isSelected ? "font-bold text-primary" : "text-ink"
+                    }`}
+                  >
+                    {item.label}
+                  </Typography>
+                  <Typography
+                    className={`text-sm ${
+                      isSelected ? "font-bold text-primary" : "text-ink-mute"
+                    }`}
+                  >
+                    {item.currency}
+                  </Typography>
+                </Pressable>
+              );
+            })}
+          </View>
         </ScrollView>
       </Modal.Body>
     </Modal>

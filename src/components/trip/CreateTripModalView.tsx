@@ -5,8 +5,9 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ChevronDown } from "lucide-react-native";
-import { Platform, Pressable, Text, TextInput, View } from "react-native";
+import { Platform, Pressable, TextInput, View } from "react-native";
 import { Modal } from "../common/Modal";
+import { Typography } from "../common/Typography";
 
 export interface CreateTripFormState {
   name: string;
@@ -68,74 +69,74 @@ export const CreateTripModalView = ({
       <Modal.Header title={isEditMode ? "여행 정보 수정" : "새 여행 추가"} />
 
       <Modal.Body>
-        <Text className="text-sm font-semibold text-slate-text mb-1">
+        <Typography className="text-sm font-semibold text-ink mb-1">
           여행 이름
-        </Text>
+        </Typography>
         <TextInput
           placeholder="예: 도쿄 3박 4일 여행"
           value={formState.name}
           onChangeText={handlers.onChangeName}
-          className="border border-slate-border rounded-xl p-3 mb-4 text-slate-text"
+          placeholderTextColor={COLORS.ink.mute}
+          className="border border-line bg-surface rounded-xl p-3 mb-4 text-ink"
         />
 
         <View className="mb-4 z-50">
-          <Text className="text-sm font-semibold text-slate-text mb-1">
+          <Typography className="text-sm font-semibold text-ink mb-1">
             여행 국가
-          </Text>
+          </Typography>
           <Pressable
             onPress={handlers.onToggleCountryPicker}
-            className="border border-slate-border rounded-xl p-3 bg-white flex-row justify-between items-center active:bg-slate-bg"
+            className="border border-line rounded-xl p-3 bg-surface flex-row justify-between items-center active:bg-fill-strong transition-all"
           >
-            <Text className="text-slate-text">{formState.country}</Text>
+            <Typography className="text-ink">{formState.country}</Typography>
             <View className="flex-row items-center gap-2">
-              <Text className="text-xs font-bold text-slate-inactive">
+              <Typography className="text-xs font-bold text-ink-mute">
                 {formState.currency}
-              </Text>
-              <ChevronDown size={18} color={COLORS.slate.inactive} />
+              </Typography>
+              <ChevronDown size={18} color={COLORS.ink.mute} />
             </View>
           </Pressable>
 
           {formState.currency !== "KRW" && (
-            <View className="mb-4">
-              <Text className="text-sm font-semibold text-slate-text mb-1">
+            <View className="mb-4 mt-4">
+              <Typography className="text-sm font-semibold text-ink mb-1">
                 적용 환율 (선택)
-              </Text>
+              </Typography>
               <View className="flex-row items-center">
-                <Text className="text-sm font-bold text-slate-text mr-3">
+                <Typography className="text-sm font-bold text-ink mr-3">
                   1 {formState.currency} =
-                </Text>
+                </Typography>
                 <TextInput
                   placeholder="미입력 시 실시간 환율 적용"
                   value={formState.customExchangeRate}
                   onChangeText={handlers.onChangeCustomExchangeRate}
+                  placeholderTextColor={COLORS.ink.mute}
                   keyboardType="numeric"
-                  className="flex-1 border border-slate-border rounded-xl p-3 text-slate-text bg-white"
+                  className="flex-1 border border-line rounded-xl p-3 text-ink bg-surface"
                 />
-                <Text className="text-sm font-bold text-slate-text ml-3">
+                <Typography className="text-sm font-bold text-ink ml-3">
                   원 (KRW)
-                </Text>
+                </Typography>
               </View>
             </View>
           )}
 
           {formState.isCountryPickerOpen && (
-            <View className="absolute top-16 left-0 right-0 bg-white border border-slate-border rounded-xl shadow-lg z-50 overflow-hidden">
+            <View className="absolute top-16 left-0 right-0 bg-surface border border-line rounded-xl shadow-lg z-50 overflow-hidden">
               {COUNTRIES.map((item, index) => (
                 <Pressable
                   key={item.currency}
                   onPress={() =>
                     handlers.onSelectCountry(item.label, item.currency)
                   }
-                  className={`p-3 flex-row justify-between items-center active:bg-slate-bg ${
-                    index !== COUNTRIES.length - 1
-                      ? "border-b border-slate-border"
-                      : ""
+                  className={`p-3 flex-row justify-between items-center active:bg-fill transition-all ${
+                    index !== COUNTRIES.length - 1 ? "border-b border-line" : ""
                   }`}
                 >
-                  <Text className="text-slate-text">{item.label}</Text>
-                  <Text className="text-xs text-slate-inactive">
+                  <Typography className="text-ink">{item.label}</Typography>
+                  <Typography className="text-xs text-ink-mute">
                     {item.currency}
-                  </Text>
+                  </Typography>
                 </Pressable>
               ))}
             </View>
@@ -144,63 +145,64 @@ export const CreateTripModalView = ({
 
         <View className="flex-row gap-3 mb-4">
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-text mb-1">
+            <Typography className="text-sm font-semibold text-ink mb-1">
               시작일
-            </Text>
+            </Typography>
             <Pressable
               onPress={() => handlers.onOpenPicker("start")}
-              className={`border rounded-xl p-3 bg-white ${
-                pickerType === "start"
-                  ? "border-primary"
-                  : "border-slate-border"
+              className={`border rounded-xl p-3 bg-surface active:bg-fill-strong transition-all ${
+                pickerType === "start" ? "border-primary" : "border-line"
               }`}
             >
-              <Text className="text-slate-text">
+              <Typography className="text-ink">
                 {format(formState.startDate, "yyyy-MM-dd")}
-              </Text>
+              </Typography>
             </Pressable>
           </View>
           <View className="flex-1">
-            <Text className="text-sm font-semibold text-slate-text mb-1">
+            <Typography className="text-sm font-semibold text-ink mb-1">
               종료일
-            </Text>
+            </Typography>
             <Pressable
               onPress={() => handlers.onOpenPicker("end")}
-              className={`border rounded-xl p-3 bg-white ${
-                pickerType === "end" ? "border-primary" : "border-slate-border"
+              className={`border rounded-xl p-3 bg-surface active:bg-fill-strong transition-all ${
+                pickerType === "end" ? "border-primary" : "border-line"
               }`}
             >
-              <Text className="text-slate-text">
+              <Typography className="text-ink">
                 {format(formState.endDate, "yyyy-MM-dd")}
-              </Text>
+              </Typography>
             </Pressable>
           </View>
         </View>
 
         <View className="mb-6">
-          <Text className="text-sm font-semibold text-slate-text mb-1">
+          <Typography className="text-sm font-semibold text-ink mb-1">
             총 예산 ({formState.currency})
-          </Text>
+          </Typography>
           <TextInput
             placeholder="0"
             keyboardType="numeric"
             value={formState.totalBudget}
             onChangeText={handlers.onChangeTotalBudget}
-            className="border border-slate-border rounded-xl p-3 text-slate-text"
+            placeholderTextColor={COLORS.ink.mute}
+            className="border border-line bg-surface rounded-xl p-3 text-ink"
           />
         </View>
 
         {pickerType && Platform.OS === "ios" && (
-          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border-t border-slate-border rounded-t-3xl shadow-2xl z-50">
+          <View className="absolute bottom-0 left-0 right-0 bg-surface p-5 border border-line rounded-3xl shadow-2xl z-50">
             <View className="flex-row justify-between items-center mb-2 px-2">
-              <Text className="text-base font-bold text-slate-text">
+              <Typography className="text-base font-bold text-ink">
                 {pickerType === "start" ? "🛫 시작일 선택" : "🛬 종료일 선택"}
-              </Text>
+              </Typography>
               <Pressable
                 onPress={handlers.onDismissPicker}
-                className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
+                className="bg-fill px-4 py-2 rounded-xl active:bg-fill-strong"
               >
-                <Text className="text-slate-text font-bold text-sm">닫기</Text>
+                <Typography className="text-ink font-bold text-sm">
+                  닫기
+                </Typography>
               </Pressable>
             </View>
             {picker}
@@ -214,15 +216,15 @@ export const CreateTripModalView = ({
         <Pressable
           onPress={handlers.onSubmit}
           disabled={isPending}
-          className="flex-1 bg-primary p-4 rounded-xl items-center active:opacity-80"
+          className="flex-1 bg-primary p-4 rounded-xl items-center active:opacity-80 transition-all"
         >
-          <Text className="text-white font-bold text-base">
+          <Typography className="text-white font-bold text-base">
             {isPending
               ? "저장 중..."
               : isEditMode
                 ? "수정 완료"
                 : "여행 등록하기"}
-          </Text>
+          </Typography>
         </Pressable>
       </Modal.Footer>
     </Modal>
