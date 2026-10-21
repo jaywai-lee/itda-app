@@ -1,3 +1,4 @@
+import { Typography } from "@/components/common/Typography";
 import { PastTripListItem } from "@/components/trip/PastTripListItem";
 import { COLORS } from "@/constants/colors";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +11,6 @@ import {
   Alert,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -61,9 +61,9 @@ export default function MyPageScreen() {
   }
 
   return (
-    <View className="flex-1 bg-slate-bg">
+    <View className="flex-1 bg-fill">
       <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
-        <View className="bg-white p-6 rounded-3xl border border-slate-border shadow-sm mb-6 flex-row items-center">
+        <View className="bg-surface p-6 rounded-3xl border border-line shadow-sm mb-6 flex-row items-center">
           <View className="w-16 h-16 bg-primary/10 rounded-full justify-center items-center mr-4">
             <User size={32} color={COLORS.primary.DEFAULT} />
           </View>
@@ -73,65 +73,68 @@ export default function MyPageScreen() {
                 <TextInput
                   value={nicknameInput}
                   onChangeText={setNicknameInput}
-                  className="flex-1 border-b border-primary p-1 text-base text-slate-text mr-2 font-bold"
+                  placeholderTextColor={COLORS.ink.mute}
+                  className="flex-1 border-b border-primary p-1 text-base text-ink mr-2 font-bold"
                   placeholder="새 닉네임"
                   autoFocus
                 />
                 <Pressable
                   onPress={handleUpdateNickname}
                   disabled={updating}
-                  className="bg-primary px-3 py-1.5 rounded-lg active:opacity-80"
+                  className="bg-primary px-3 py-1.5 rounded-lg active:opacity-80 transition-all"
                 >
-                  <Text className="text-white text-xs font-bold">
+                  <Typography className="text-white text-xs font-bold">
                     {updating ? "..." : "저장"}
-                  </Text>
+                  </Typography>
                 </Pressable>
               </View>
             ) : (
               <View className="flex-row items-center">
-                <Text className="text-xl font-bold text-slate-text mr-2">
+                <Typography className="text-xl font-bold text-ink mr-2">
                   {displayName}
-                </Text>
+                </Typography>
                 <Pressable
                   onPress={() => {
                     setNicknameInput(displayName);
                     setIsEditingName(true);
                   }}
-                  className="p-1"
+                  className="p-1 active:bg-fill rounded-md transition-all"
                 >
-                  <Edit2 size={16} color={COLORS.slate.inactive} />
+                  <Edit2 size={16} color={COLORS.ink.mute} />
                 </Pressable>
               </View>
             )}
-            <Text className="text-sm text-slate-inactive mt-1">
+            <Typography className="text-sm text-ink-mute mt-1">
               {user?.email}
-            </Text>
+            </Typography>
           </View>
         </View>
 
-        <View className="bg-slate-800 p-6 rounded-3xl mb-8 shadow-md">
-          <Text className="text-white/80 text-sm font-medium mb-1">
+        <View className="bg-ink p-6 rounded-3xl mb-8 shadow-md">
+          <Typography className="text-white/80 text-sm font-medium mb-1">
             {currentYear}년의 기록
-          </Text>
-          <Text className="text-white text-2xl font-bold mb-4">
+          </Typography>
+          <Typography className="text-white text-2xl font-bold mb-4">
             올해{" "}
-            <Text className="text-primary-light">{yearlyTrips.length}</Text>번의
-            여행을 다녀왔어요!
-          </Text>
-          <Text className="text-white/60 text-xs">
+            <Typography className="text-primary-light">
+              {yearlyTrips.length}
+            </Typography>
+            번의 여행을 다녀왔어요!
+          </Typography>
+          <Typography className="text-white/60 text-xs">
             여행별 상세 지출액은 아래 히스토리 카드에서 확인하세요.
-          </Text>
+          </Typography>
         </View>
 
         <View className="mb-6">
-          <Text className="text-lg font-bold text-slate-text mb-4 ml-1">
+          <Typography className="text-lg font-bold text-ink mb-4 ml-1">
             지난 여행 히스토리
-          </Text>
+          </Typography>
           {pastTrips.length === 0 ? (
-            <View className="bg-white p-8 rounded-2xl border border-slate-border items-center mt-2 shadow-sm">
-              <Text className="text-slate-inactive text-sm font-medium">
+            <View className="bg-surface p-8 rounded-2xl border border-line items-center mt-2 shadow-sm">
+              <Typography className="text-ink-mute text-sm font-medium">
                 아직 종료된 여행 기록이 없습니다.
-              </Text>
+              </Typography>
             </View>
           ) : (
             pastTrips.map((trip) => (
