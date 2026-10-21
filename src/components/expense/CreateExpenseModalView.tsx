@@ -11,12 +11,12 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View,
 } from "react-native";
 import { CategoryIcon } from "../common/CategoryIcon";
 import { Modal } from "../common/Modal";
+import { Typography } from "../common/Typography";
 
 export interface CreateExpenseFormState {
   amount: string;
@@ -85,34 +85,35 @@ export const CreateExpenseModalView = ({
           keyboardShouldPersistTaps="handled"
           className="max-h-[65vh]"
         >
-          <Text className="text-sm font-semibold text-slate-text mb-1">
+          <Typography className="text-sm font-semibold text-ink mb-1">
             금액 ({currency})
-          </Text>
+          </Typography>
           <TextInput
             placeholder="0"
             keyboardType="numeric"
             value={formState.amount}
             onChangeText={handlers.onChangeAmount}
-            className="border border-slate-border rounded-xl p-3 mb-4 text-slate-text font-bold text-lg"
+            placeholderTextColor={COLORS.ink.mute}
+            className="border border-line rounded-xl p-3 mb-4 text-ink font-bold text-lg bg-surface"
           />
 
-          <Text className="text-sm font-semibold text-slate-text mb-1">
+          <Typography className="text-sm font-semibold text-ink mb-1">
             결제일
-          </Text>
+          </Typography>
           <Pressable
             onPress={() => handlers.onToggleDatePicker(true)}
-            className={`border rounded-xl p-3 mb-4 bg-white active:bg-slate-bg ${
-              isDatePickerOpen ? "border-primary" : "border-slate-border"
+            className={`border rounded-xl p-3 mb-4 bg-surface active:bg-fill-strong transition-all ${
+              isDatePickerOpen ? "border-primary" : "border-line"
             }`}
           >
-            <Text className="text-slate-text">
+            <Typography className="text-ink">
               {format(formState.spentDate, "yyyy-MM-dd")}
-            </Text>
+            </Typography>
           </Pressable>
 
-          <Text className="text-sm font-semibold text-slate-text mb-2">
+          <Typography className="text-sm font-semibold text-ink mb-2">
             카테고리
-          </Text>
+          </Typography>
           {isLoadingCategories ? (
             <ActivityIndicator
               size="small"
@@ -134,7 +135,7 @@ export const CreateExpenseModalView = ({
                   <Pressable
                     key={cat.id}
                     onPress={() => handlers.onSelectCategory(cat.id)}
-                    className="flex-row items-center px-3.5 py-2 rounded-full mr-2 border"
+                    className="flex-row items-center px-3.5 py-2 rounded-full mr-2 border transition-all"
                     style={{
                       backgroundColor: isSelected ? tint : `${tint}15`,
                       borderColor: isSelected ? tint : `${tint}40`,
@@ -145,14 +146,14 @@ export const CreateExpenseModalView = ({
                       color={isSelected ? "#FFFFFF" : tint}
                       size={16}
                     />
-                    <Text
+                    <Typography
                       className="font-semibold ml-1.5"
                       style={{
-                        color: isSelected ? "#FFFFFF" : COLORS.slate.text,
+                        color: isSelected ? "#FFFFFF" : COLORS.ink.DEFAULT,
                       }}
                     >
                       {cat.name}
-                    </Text>
+                    </Typography>
                   </Pressable>
                 );
               })}
@@ -160,24 +161,24 @@ export const CreateExpenseModalView = ({
           )}
 
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-sm font-semibold text-slate-text">
+            <Typography className="text-sm font-semibold text-ink">
               영수증/사진 첨부
-            </Text>
+            </Typography>
             {formState.photoUrl ? (
               <Pressable
                 onPress={handlers.onRemoveImage}
-                className="active:opacity-70"
+                className="active:opacity-70 p-1"
               >
-                <Text className="text-xs text-budget-danger font-semibold">
+                <Typography className="text-xs text-budget-danger font-semibold">
                   삭제
-                </Text>
+                </Typography>
               </Pressable>
             ) : null}
           </View>
 
           <Pressable
             onPress={handlers.onPickImage}
-            className="border border-slate-border border-dashed rounded-xl mb-4 overflow-hidden items-center justify-center bg-slate-bg h-32 active:opacity-70"
+            className="border border-line border-dashed rounded-xl mb-4 overflow-hidden items-center justify-center bg-fill h-32 active:bg-fill-strong transition-all"
           >
             {formState.photoUrl ? (
               <Image
@@ -187,37 +188,40 @@ export const CreateExpenseModalView = ({
               />
             ) : (
               <>
-                <ImageIcon size={28} color={COLORS.slate.inactive} />
-                <Text className="text-slate-inactive mt-2 font-semibold">
+                <ImageIcon size={28} color={COLORS.ink.mute} />
+                <Typography className="text-ink-mute mt-2 font-semibold">
                   사진 선택하기
-                </Text>
+                </Typography>
               </>
             )}
           </Pressable>
 
-          <Text className="text-sm font-semibold text-slate-text mb-1">
+          <Typography className="text-sm font-semibold text-ink mb-1">
             메모 (선택)
-          </Text>
+          </Typography>
           <TextInput
             placeholder="어디에 사용하셨나요?"
             value={formState.memo}
             onChangeText={handlers.onChangeMemo}
-            className="border border-slate-border rounded-xl p-3 text-slate-text"
+            placeholderTextColor={COLORS.ink.mute}
+            className="border border-line bg-surface rounded-xl p-3 text-ink"
             multiline
           />
         </ScrollView>
 
         {isDatePickerOpen && Platform.OS === "ios" && (
-          <View className="absolute bottom-0 left-0 right-0 bg-white p-5 border border-slate-border rounded-3xl shadow-2xl z-50">
+          <View className="absolute bottom-0 left-0 right-0 bg-surface p-5 border border-line rounded-3xl shadow-2xl z-50">
             <View className="flex-row justify-between items-center mb-2 px-2">
-              <Text className="text-base font-bold text-slate-text">
+              <Typography className="text-base font-bold text-ink">
                 📅 결제일 선택
-              </Text>
+              </Typography>
               <Pressable
                 onPress={handlers.onDismissDatePicker}
-                className="bg-slate-bg px-4 py-2 rounded-xl active:opacity-80"
+                className="bg-fill px-4 py-2 rounded-xl active:bg-fill-strong"
               >
-                <Text className="text-slate-text font-bold text-sm">닫기</Text>
+                <Typography className="text-ink font-bold text-sm">
+                  닫기
+                </Typography>
               </Pressable>
             </View>
             {picker}
@@ -231,7 +235,7 @@ export const CreateExpenseModalView = ({
         {isEditMode && handlers.onDelete && (
           <Pressable
             onPress={handlers.onDelete}
-            className="bg-budget-danger/10 p-4 rounded-xl items-center justify-center px-6 active:opacity-80"
+            className="bg-budget-danger/10 p-4 rounded-xl items-center justify-center px-6 active:opacity-80 transition-all"
           >
             <Trash2 size={20} color={COLORS.budget.danger} />
           </Pressable>
@@ -239,15 +243,15 @@ export const CreateExpenseModalView = ({
         <Pressable
           onPress={handlers.onSubmit}
           disabled={isPending}
-          className="flex-1 bg-primary p-4 rounded-xl items-center active:opacity-80"
+          className="flex-1 bg-primary p-4 rounded-xl items-center active:opacity-80 transition-all"
         >
-          <Text className="text-white font-bold text-base">
+          <Typography className="text-white font-bold text-base">
             {isPending
               ? "처리 중..."
               : isEditMode
                 ? "수정 완료"
                 : "지출 등록하기"}
-          </Text>
+          </Typography>
         </Pressable>
       </View>
     </Modal>

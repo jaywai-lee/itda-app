@@ -1,7 +1,8 @@
 import { COLORS } from "@/constants/colors";
 import { Check } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Modal } from "../common/Modal";
+import { Typography } from "../common/Typography";
 
 interface BudgetThresholdModalProps {
   visible: boolean;
@@ -30,7 +31,7 @@ export const BudgetThresholdModal = ({
     <Modal visible={visible} onClose={onClose}>
       <Modal.Header title="예산 경고 기준 설정" />
       <Modal.Body>
-        <View className="bg-slate-bg rounded-2xl overflow-hidden">
+        <View className="bg-surface rounded-2xl overflow-hidden border border-line">
           {THRESHOLD_OPTIONS.map((option, index) => {
             const isSelected = currentThreshold === option.value;
             return (
@@ -38,19 +39,19 @@ export const BudgetThresholdModal = ({
                 key={option.value}
                 onPress={() => onSelect(option.value)}
                 disabled={isUpdating}
-                className={`flex-row items-center justify-between p-4 bg-white active:opacity-70 ${
+                className={`flex-row items-center justify-between p-4 bg-surface active:bg-fill transition-all ${
                   index !== THRESHOLD_OPTIONS.length - 1
-                    ? "border-b border-slate-border"
+                    ? "border-b border-line"
                     : ""
                 }`}
               >
-                <Text
+                <Typography
                   className={`text-base font-medium ${
-                    isSelected ? "text-primary font-bold" : "text-slate-text"
+                    isSelected ? "text-primary font-bold" : "text-ink"
                   }`}
                 >
                   {option.label}
-                </Text>
+                </Typography>
                 {isSelected && (
                   <Check size={20} color={COLORS.primary.DEFAULT} />
                 )}
