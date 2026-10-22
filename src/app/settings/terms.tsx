@@ -24,14 +24,19 @@ export default function TermsScreen() {
       </View>
 
       <ScrollView
-        className="flex-1 px-5 pt-6 pb-12"
+        className="flex-1"
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 24,
+          paddingBottom: 48,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <Typography className="text-base font-bold text-ink mb-2">
           제1조 (목적)
         </Typography>
         <Typography className="text-sm text-ink-mute leading-6 mb-6">
-          본 약관은 '잇다(Itda)' 앱 서비스의 이용과 관련하여 회사와 사용자 간의
+          본 약관은 ‘잇다(Itda)’ 앱 서비스의 이용과 관련하여 회사와 사용자 간의
           권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
         </Typography>
 

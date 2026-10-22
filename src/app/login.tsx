@@ -1,3 +1,4 @@
+import { Typography } from "@/components/common/Typography";
 import { COLORS } from "@/constants/colors";
 import { supabase } from "@/services/supabase";
 import { router } from "expo-router";
@@ -9,7 +10,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -42,7 +42,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-slate-bg"
+      className="flex-1 bg-canvas"
     >
       <ScrollView
         contentContainerStyle={{
@@ -52,34 +52,34 @@ export default function LoginScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="items-center mb-10 mt-10">
+        <View className="items-center mb-10">
           <Image
             source={require("../../assets/images/icon.png")}
-            className="w-24 h-24 mb-4 rounded-3xl"
+            className="w-24 h-24 mb-4 rounded-[24px]"
             resizeMode="contain"
           />
-          <Text className="text-3xl font-extrabold text-slate-text tracking-tight mb-1">
+          <Typography className="text-3xl font-extrabold text-ink tracking-tight mb-1">
             잇다
-          </Text>
-          <Text className="text-sm text-slate-inactive font-medium">
+          </Typography>
+          <Typography className="text-sm text-ink-sub font-medium">
             여정과 지출을 잇는 스마트한 여행 가계부
-          </Text>
+          </Typography>
         </View>
 
         <View className="space-y-4 mb-6">
           <TextInput
-            className="bg-white border border-slate-border rounded-2xl p-4 text-base text-slate-text font-medium"
+            className="bg-fill border border-line rounded-2xl p-4 text-base text-ink font-medium"
             placeholder="이메일 주소"
-            placeholderTextColor={COLORS.slate.inactive || "#94A3B8"}
+            placeholderTextColor={COLORS.ink?.mute || "#94A3B8"}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
           />
           <TextInput
-            className="bg-white border border-slate-border rounded-2xl p-4 text-base text-slate-text font-medium mt-3"
+            className="bg-fill border border-line rounded-2xl p-4 text-base text-ink font-medium mt-3"
             placeholder="비밀번호"
-            placeholderTextColor={COLORS.slate.inactive || "#94A3B8"}
+            placeholderTextColor={COLORS.ink?.mute || "#94A3B8"}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -92,15 +92,22 @@ export default function LoginScreen() {
           disabled={loading}
           className="bg-primary p-4 rounded-2xl items-center active:opacity-80 shadow-sm"
         >
-          <Text className="text-white font-bold text-base">로그인</Text>
+          <Typography className="text-white font-bold text-base">
+            로그인
+          </Typography>
         </Pressable>
 
-        <View className="flex-row justify-center items-center mt-auto mb-4">
-          <Text className="text-sm text-slate-inactive font-medium">
+        <View className="flex-row justify-center items-center mt-6">
+          <Typography className="text-sm text-ink-sub font-medium">
             아직 계정이 없으신가요?
-          </Text>
-          <Pressable onPress={() => router.push("/signup")} className="p-1">
-            <Text className="text-sm font-bold text-primary">회원가입</Text>
+          </Typography>
+          <Pressable
+            onPress={() => router.push("/signup")}
+            className="p-1 ml-1"
+          >
+            <Typography className="text-sm font-bold text-primary">
+              회원가입
+            </Typography>
           </Pressable>
         </View>
       </ScrollView>

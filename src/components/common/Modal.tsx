@@ -55,22 +55,20 @@ export const Modal = ({ visible, onClose, children, ...props }: ModalProps) => {
   const keyboardHeight = useSharedValue(0);
 
   const animateClose = () => {
-    backdropOpacity.value = withTiming(0, { duration: 200 });
-    translateY.value = withTiming(
-      SCREEN_HEIGHT,
-      { duration: 200 },
-      (finished) => {
+    backdropOpacity.set(withTiming(0, { duration: 200 }));
+    translateY.set(
+      withTiming(SCREEN_HEIGHT, { duration: 200 }, (finished) => {
         if (finished) scheduleOnRN(onClose);
-      },
+      }),
     );
   };
 
   useEffect(() => {
     if (visible) {
-      translateY.value = SCREEN_HEIGHT;
-      backdropOpacity.value = 0;
-      translateY.value = withTiming(0, { duration: 250 });
-      backdropOpacity.value = withTiming(1, { duration: 250 });
+      translateY.set(SCREEN_HEIGHT);
+      backdropOpacity.set(0);
+      translateY.set(withTiming(0, { duration: 250 }));
+      backdropOpacity.set(withTiming(1, { duration: 250 }));
     }
   }, [visible, translateY, backdropOpacity]);
 
@@ -81,13 +79,13 @@ export const Modal = ({ visible, onClose, children, ...props }: ModalProps) => {
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const showSubscription = Keyboard.addListener(showEvent, (e) => {
-      keyboardHeight.value = withTiming(e.endCoordinates.height, {
-        duration: 250,
-      });
+      keyboardHeight.set(
+        withTiming(e.endCoordinates.height, { duration: 250 }),
+      );
     });
 
     const hideSubscription = Keyboard.addListener(hideEvent, () => {
-      keyboardHeight.value = withTiming(0, { duration: 250 });
+      keyboardHeight.set(withTiming(0, { duration: 250 }));
     });
 
     return () => {
@@ -98,29 +96,27 @@ export const Modal = ({ visible, onClose, children, ...props }: ModalProps) => {
 
   const panGesture = Gesture.Pan()
     .onChange((e) => {
-      translateY.value = Math.max(0, e.translationY);
+      translateY.set(Math.max(0, e.translationY));
     })
     .onEnd((e) => {
       if (e.translationY > CLOSE_DISTANCE || e.velocityY > CLOSE_VELOCITY) {
-        backdropOpacity.value = withTiming(0, { duration: 200 });
-        translateY.value = withTiming(
-          SCREEN_HEIGHT,
-          { duration: 200 },
-          (finished) => {
+        backdropOpacity.set(withTiming(0, { duration: 200 }));
+        translateY.set(
+          withTiming(SCREEN_HEIGHT, { duration: 200 }, (finished) => {
             if (finished) scheduleOnRN(onClose);
-          },
+          }),
         );
       } else {
-        translateY.value = withSpring(0, { damping: 18, stiffness: 120 });
+        translateY.set(withSpring(0, { damping: 18, stiffness: 120 }));
       }
     });
 
   const sheetStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value - keyboardHeight.value }],
+    transform: [{ translateY: translateY.get() - keyboardHeight.get() }],
   }));
 
   const backdropStyle = useAnimatedStyle(() => ({
-    opacity: backdropOpacity.value,
+    opacity: backdropOpacity.get(),
   }));
 
   return (

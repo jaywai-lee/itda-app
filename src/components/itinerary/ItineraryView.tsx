@@ -94,7 +94,12 @@ export const ItineraryView = ({
         />
       );
     },
-    [state.localItineraries.length, state.expenses, handlers],
+    [
+      state.localItineraries.length,
+      state.expenses,
+      handlers,
+      state.activeTripCurrency,
+    ],
   );
 
   if (

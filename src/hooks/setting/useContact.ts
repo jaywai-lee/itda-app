@@ -18,7 +18,7 @@ export const useContact = () => {
           `기본 메일 앱을 열 수 없습니다.\n아래 이메일로 직접 문의해 주세요.\n\n${email}`,
         );
       }
-    } catch (_) {
+    } catch {
       Alert.alert("오류", "메일 앱 연결 중 문제가 발생했습니다.");
     }
   };

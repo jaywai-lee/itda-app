@@ -74,7 +74,8 @@ export const useBottomSheet = () => {
             easing: Easing.out(Easing.cubic),
           });
         }),
-    [collapsedY, defaultY, translateY, startY],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const sheetStyle = useAnimatedStyle(() => ({

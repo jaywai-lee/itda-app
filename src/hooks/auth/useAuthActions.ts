@@ -34,7 +34,7 @@ export const useAuthActions = () => {
             try {
               await deleteAccount();
               router.replace("/login");
-            } catch (error) {
+            } catch {
               Alert.alert(
                 "오류",
                 "회원 탈퇴 처리 중 문제가 발생했습니다. 다시 시도해 주세요.",

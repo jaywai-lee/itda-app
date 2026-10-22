@@ -19,7 +19,7 @@ export const getTripDays = (startDate: string, endDate: string): TripDay[] => {
       dateString: format(date, "yyyy-MM-dd"),
       displayDate: format(date, "MM.dd"),
     }));
-  } catch (error) {
+  } catch {
     return [];
   }
 };

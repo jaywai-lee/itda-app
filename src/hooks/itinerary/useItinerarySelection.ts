@@ -1,29 +1,31 @@
 import { Trip } from "@/types/database";
 import { getTripDays } from "@/utils/dateUtils";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export const useItinerarySelection = (trips: Trip[] | undefined) => {
   const [selectedTripId, setSelectedTripId] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const activeTrip = trips?.find((t) => t.id === selectedTripId);
+  if (!selectedTripId && trips && trips.length > 0) {
+    setSelectedTripId(trips[0].id);
+  }
+
+  const effectiveTripId =
+    selectedTripId || (trips && trips.length > 0 ? trips[0].id : "");
+
+  const activeTrip = trips?.find((t) => t.id === effectiveTripId);
 
   const tripDays = useMemo(() => {
     if (!activeTrip) return [];
     return getTripDays(activeTrip.start_date, activeTrip.end_date);
   }, [activeTrip]);
 
-  useEffect(() => {
-    if (trips && trips.length > 0 && !selectedTripId) {
-      setSelectedTripId(trips[0].id);
-    }
-  }, [trips, selectedTripId]);
+  if (!selectedDate && tripDays.length > 0) {
+    setSelectedDate(tripDays[0].dateString);
+  }
 
-  useEffect(() => {
-    if (tripDays.length > 0 && !selectedDate) {
-      setSelectedDate(tripDays[0].dateString);
-    }
-  }, [tripDays, selectedDate]);
+  const effectiveDate =
+    selectedDate || (tripDays.length > 0 ? tripDays[0].dateString : null);
 
   const handleSelectTrip = (id: string) => {
     if (id !== selectedTripId) {
@@ -33,8 +35,8 @@ export const useItinerarySelection = (trips: Trip[] | undefined) => {
   };
 
   return {
-    selectedTripId,
-    selectedDate,
+    selectedTripId: effectiveTripId,
+    selectedDate: effectiveDate,
     activeTrip,
     tripDays,
     setSelectedDate,
