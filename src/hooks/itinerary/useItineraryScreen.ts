@@ -1,5 +1,5 @@
 import { Itinerary } from "@/types/database";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert } from "react-native";
 import { useExpenses } from "../expense/useExpenses";
 import { useTrips } from "../trip/useTrips";
@@ -25,7 +25,20 @@ export const useItineraryScreen = () => {
   const { mutate: deleteItinerary } = useDeleteItinerary();
   const { mutate: updateOrder } = useUpdateItineraryOrder();
 
-  useEffect(() => {
+  const [prevProps, setPrevProps] = useState({
+    itineraries,
+    selectedDate: selection.selectedDate,
+  });
+
+  if (
+    itineraries !== prevProps.itineraries ||
+    selection.selectedDate !== prevProps.selectedDate
+  ) {
+    setPrevProps({
+      itineraries,
+      selectedDate: selection.selectedDate,
+    });
+
     if (itineraries && selection.selectedDate) {
       const filtered = itineraries.filter(
         (item) => item.visit_date === selection.selectedDate,
@@ -36,7 +49,7 @@ export const useItineraryScreen = () => {
     } else {
       setLocalItineraries([]);
     }
-  }, [itineraries, selection.selectedDate]);
+  }
 
   const handleDeleteItinerary = (id: string) => {
     Alert.alert("일정 삭제", "해당 장소를 일정에서 삭제하시겠습니까?", [

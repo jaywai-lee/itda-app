@@ -1,6 +1,6 @@
 import { Expense } from "@/types/database";
 import * as ImagePicker from "expo-image-picker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert } from "react-native";
 
 export const useExpenseImage = (
@@ -9,11 +9,17 @@ export const useExpenseImage = (
 ) => {
   const [photoUrl, setPhotoUrl] = useState("");
 
-  useEffect(() => {
+  const [prevProps, setPrevProps] = useState({
+    visible: false,
+    editTarget,
+  });
+
+  if (visible !== prevProps.visible || editTarget !== prevProps.editTarget) {
+    setPrevProps({ visible, editTarget });
     if (visible) {
       setPhotoUrl(editTarget?.photo_url || "");
     }
-  }, [visible, editTarget]);
+  }
 
   const handlePickImage = async () => {
     const permissionResult =

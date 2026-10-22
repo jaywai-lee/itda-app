@@ -107,7 +107,7 @@ export default function CategorySettingsScreen() {
             }),
         },
       ]);
-    } catch (error) {
+    } catch {
       Alert.alert("오류", "데이터를 확인하는 중 문제가 발생했습니다.");
     }
   };

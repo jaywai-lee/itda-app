@@ -1,7 +1,7 @@
 import { Itinerary } from "@/types/database";
 import { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { parseISO } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const useAddPlaceForm = (
   visible: boolean,
@@ -15,7 +15,19 @@ export const useAddPlaceForm = (
   const [memo, setMemo] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  useEffect(() => {
+  const [prevProps, setPrevProps] = useState({
+    visible: false,
+    selectedDate,
+    editTarget,
+  });
+
+  if (
+    visible !== prevProps.visible ||
+    selectedDate !== prevProps.selectedDate ||
+    editTarget !== prevProps.editTarget
+  ) {
+    setPrevProps({ visible, selectedDate, editTarget });
+
     if (visible) {
       if (editTarget) {
         setPlaceName(editTarget.place_name || "");
@@ -34,7 +46,7 @@ export const useAddPlaceForm = (
       }
       setIsDatePickerOpen(false);
     }
-  }, [visible, editTarget, selectedDate]);
+  }
 
   const handlePlaceSelect = (
     name: string,

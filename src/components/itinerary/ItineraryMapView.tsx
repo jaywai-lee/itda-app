@@ -1,5 +1,5 @@
 import { Itinerary } from "@/types/database";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Typography } from "../common/Typography";
@@ -23,11 +23,14 @@ const DEFAULT_REGION = {
 export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
   const mapRef = useRef<MapView>(null);
 
-  const validItineraries =
-    itineraries?.filter(
-      (item): item is Itinerary & { lat: number; lng: number } =>
-        item.lat !== null && item.lng !== null,
-    ) || [];
+  const validItineraries = useMemo(
+    () =>
+      itineraries?.filter(
+        (item): item is Itinerary & { lat: number; lng: number } =>
+          item.lat !== null && item.lng !== null,
+      ) || [],
+    [itineraries],
+  );
 
   useEffect(() => {
     if (validItineraries.length === 0 || !mapRef.current) return;
@@ -45,7 +48,7 @@ export const ItineraryMapView = ({ itineraries }: ItineraryMapViewProps) => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [itineraries]);
+  }, [validItineraries]);
 
   const initialRegion =
     validItineraries.length > 0
